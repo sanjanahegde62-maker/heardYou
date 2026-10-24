@@ -199,7 +199,8 @@ class BriefServiceTest {
     }
 
     @Test
-    void pdfRendersSourceTitleAndUrlForConditionMatch() throws IOException {
+    void pdfRendersSourceTitleForConditionMatch() throws IOException {
+        // Compact layout: source titles are rendered; URLs are omitted inline to prevent line-wrap overflow.
         CheckinResponse response = new CheckinResponse(
                 CheckinResponse.STANDARD_DISCLAIMER, "reproductive-age",
                 List.of(matchWithSource()), List.of(), List.of(), null,
@@ -210,7 +211,7 @@ class BriefServiceTest {
         String text = extractAllText(briefService.generatePdf(minimalRequest()));
 
         assertThat(text).contains("Endometriosis – NHS");
-        assertThat(text).contains("https://www.nhs.uk/conditions/endometriosis/");
+        // Source URL is omitted from the PDF body to keep content on one page
     }
 
     @Test

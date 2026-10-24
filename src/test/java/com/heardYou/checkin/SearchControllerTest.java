@@ -94,4 +94,65 @@ class SearchControllerTest {
         assertThat(response).containsKey("conditions");
         assertThat(response).containsKey("symptoms");
     }
+
+    // ── regression: real query words that were returning 500 ─────────────────
+
+    @Test
+    void searchForPain_returnsConditionsAndSymptoms() {
+        // Simulate what the real DB would return for "pain"
+        ConditionSummaryDto endoCond = new ConditionSummaryDto(
+                1L, "Endometriosis", "endometriosis",
+                "A condition causing pain.", "REPRODUCTIVE", "reproductive",
+                java.util.Set.of(), java.util.Set.of("reproductive-age"),
+                "Gynaecologist", "7-10 years");
+        SymptomDetailDto pelvicSymptom = new SymptomDetailDto(
+                1L, "Pelvic pain", "pelvic-pain", "Pain in the pelvic region", "pain",
+                List.of("cramps", "lower abdominal pain"));
+
+        when(conditionService.search("pain")).thenReturn(List.of(endoCond));
+        when(symptomService.search("pain")).thenReturn(List.of(pelvicSymptom));
+
+        var response = searchController.search("pain").getBody();
+
+        assertThat(response).isNotNull();
+        assertThat(response.get("query")).isEqualTo("pain");
+        assertThat((List<?>) response.get("conditions")).hasSize(1);
+        assertThat((List<?>) response.get("symptoms")).hasSize(1);
+        verify(conditionService).search("pain");
+        verify(symptomService).search("pain");
+    }
+
+    @Test
+    void searchForEndometriosis_returnsConditionResult() {
+        ConditionSummaryDto endoCond = new ConditionSummaryDto(
+                1L, "Endometriosis", "endometriosis",
+                "A condition causing pain.", "REPRODUCTIVE", "reproductive",
+                java.util.Set.of(), java.util.Set.of("reproductive-age"),
+                "Gynaecologist", "7-10 years");
+
+        when(conditionService.search("endometriosis")).thenReturn(List.of(endoCond));
+        when(symptomService.search("endometriosis")).thenReturn(List.of());
+
+        var response = searchController.search("endometriosis").getBody();
+
+        assertThat(response).isNotNull();
+        assertThat(response.get("query")).isEqualTo("endometriosis");
+        assertThat((List<?>) response.get("conditions")).hasSize(1);
+        assertThat((List<?>) response.get("symptoms")).isEmpty();
+        verify(conditionService).search("endometriosis");
+        verify(symptomService).search("endometriosis");
+    }
+
+    @Test
+    void searchWithNoDbMatches_returnsEmptyLists() {
+        when(conditionService.search("xyznonexistent")).thenReturn(List.of());
+        when(symptomService.search("xyznonexistent")).thenReturn(List.of());
+
+        var response = searchController.search("xyznonexistent").getBody();
+
+        assertThat(response).isNotNull();
+        assertThat(response.get("query")).isEqualTo("xyznonexistent");
+        assertThat((List<?>) response.get("conditions")).isEmpty();
+        assertThat((List<?>) response.get("symptoms")).isEmpty();
+    }
 }

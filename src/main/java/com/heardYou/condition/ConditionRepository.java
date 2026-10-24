@@ -35,6 +35,20 @@ public interface ConditionRepository extends JpaRepository<Condition, Long> {
                                                       @Param("lifeStage") String lifeStage,
                                                       Pageable pageable);
 
+    /** Filter by bodySystem (e.g. REPRODUCTIVE, CARDIOVASCULAR) — case-insensitive. */
+    @Query("SELECT DISTINCT c FROM Condition c WHERE UPPER(c.bodySystem) = UPPER(:bodySystem)")
+    Page<Condition> findByBodySystem(@Param("bodySystem") String bodySystem, Pageable pageable);
+
+    /** Filter by bodySystem + sort life-stage-tagged conditions first. */
+    @Query("""
+           SELECT DISTINCT c FROM Condition c
+           WHERE UPPER(c.bodySystem) = UPPER(:bodySystem)
+           ORDER BY CASE WHEN :lifeStage MEMBER OF c.lifeStages THEN 0 ELSE 1 END, c.name
+           """)
+    Page<Condition> findByBodySystemAndSortByLifeStage(@Param("bodySystem") String bodySystem,
+                                                        @Param("lifeStage") String lifeStage,
+                                                        Pageable pageable);
+
     @Query("SELECT DISTINCT c FROM Condition c WHERE " +
            "LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
            "LOWER(c.summary) LIKE LOWER(CONCAT('%', :q, '%'))")

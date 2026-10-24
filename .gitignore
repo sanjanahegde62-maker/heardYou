@@ -38,6 +38,7 @@ build/
 *.pdf
 inspect-pdf.jsh
 pdf-extract.txt
+pdf-inspect-output.txt
 
 # Local secrets and environment configuration
 .env

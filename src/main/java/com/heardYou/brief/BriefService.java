@@ -179,7 +179,7 @@ public class BriefService {
                 wHeader.setSpacingAfter(2);
                 doc.add(wHeader);
                 for (WarningSign w : warnings) {
-                    // Name bold, then action on same element as one paragraph each
+                    // Name bold; action on next line; source title only (no URL — avoids line-wrap overflow)
                     Paragraph wLine = new Paragraph("\u26A0 " + w.getName(), boldBody);
                     wLine.setSpacingAfter(1);
                     doc.add(wLine);
@@ -188,10 +188,9 @@ public class BriefService {
                         wAction.setSpacingAfter(1);
                         doc.add(wAction);
                     }
-                    if (notBlank(w.getSourceUrl())) {
-                        Paragraph wSrc = new Paragraph(
-                                "  Source: " + w.getSourceTitle() + " \u2014 " + w.getSourceUrl(), smallFont);
-                        wSrc.setSpacingAfter(2);
+                    if (notBlank(w.getSourceTitle())) {
+                        Paragraph wSrc = new Paragraph("  Source: " + w.getSourceTitle(), smallFont);
+                        wSrc.setSpacingAfter(1);
                         doc.add(wSrc);
                     }
                 }
@@ -270,18 +269,13 @@ public class BriefService {
                         seenQuestions.addAll(match.clinicianQuestions());
                     }
 
-                    // Sources: title only (no URL per-condition to save space)
+                    // Sources: titles only — no URLs inline (saves wrap lines)
                     if (!match.sources().isEmpty()) {
                         String srcLine = "Sources: " + match.sources().stream()
                                 .map(SourceDto::title)
                                 .collect(Collectors.joining(", "));
-                        // Keep URL for first source only
-                        SourceDto first = match.sources().get(0);
-                        if (notBlank(first.url())) {
-                            srcLine += " \u2014 " + first.url();
-                        }
                         Paragraph srcp = new Paragraph(srcLine, smallFont);
-                        srcp.setSpacingAfter(3);
+                        srcp.setSpacingAfter(2);
                         doc.add(srcp);
                     }
                 }
@@ -291,13 +285,13 @@ public class BriefService {
                     addRule(doc);
                     Paragraph qHeader = new Paragraph(
                             "Questions to bring to your appointment:", headingFont);
-                    qHeader.setSpacingAfter(2);
+                    qHeader.setSpacingAfter(1);
                     doc.add(qHeader);
                     int qCount = 0;
                     for (String q : seenQuestions) {
                         if (qCount >= MAX_QUESTIONS) break;
                         Paragraph qp = new Paragraph("  \u2022 " + q, bodyFont);
-                        qp.setSpacingAfter(1);
+                        qp.setSpacingAfter(0);
                         doc.add(qp);
                         qCount++;
                     }
@@ -324,8 +318,15 @@ public class BriefService {
                 doc.add(notesPara);
             }
 
-            // ── Footer disclaimer ────────────────────────────────────────────────
-            addRule(doc);
+            // ── Footer disclaimer — tight rule to keep on same page ──────────────
+            LineSeparator footerLs = new LineSeparator();
+            footerLs.setLineColor(new java.awt.Color(200, 200, 200));
+            footerLs.setLineWidth(0.5f);
+            Paragraph footerRulePara = new Paragraph();
+            footerRulePara.add(new Chunk(footerLs));
+            footerRulePara.setSpacingBefore(2);
+            footerRulePara.setSpacingAfter(2);
+            doc.add(footerRulePara);
             Paragraph footer = new Paragraph(
                     "This document was generated for personal use to support a medical appointment. "
                     + "It is not a medical record and does not replace professional medical advice. "

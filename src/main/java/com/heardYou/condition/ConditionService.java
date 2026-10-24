@@ -21,15 +21,20 @@ public class ConditionService {
         this.conditionSymptomRepository = conditionSymptomRepository;
     }
 
-    public Page<ConditionSummaryDto> list(String category, String lifeStage, Pageable pageable) {
+    /**
+     * Lists conditions with optional filtering by bodySystem and/or lifeStage.
+     *
+     * @param bodySystem  e.g. "REPRODUCTIVE", "CARDIOVASCULAR" — filters on Condition.bodySystem
+     * @param lifeStage   e.g. "reproductive-age" — when provided, life-stage-tagged conditions rank first
+     * @param pageable    pagination and sorting
+     */
+    public Page<ConditionSummaryDto> list(String bodySystem, String lifeStage, Pageable pageable) {
         Page<Condition> page;
-        if (category != null && lifeStage != null) {
-            
-            page = conditionRepository.findByCategoryAndSortByLifeStage(category, lifeStage, pageable);
-        } else if (category != null) {
-            page = conditionRepository.findByCategory(category, pageable);
+        if (bodySystem != null && lifeStage != null) {
+            page = conditionRepository.findByBodySystemAndSortByLifeStage(bodySystem, lifeStage, pageable);
+        } else if (bodySystem != null) {
+            page = conditionRepository.findByBodySystem(bodySystem, pageable);
         } else if (lifeStage != null) {
-           
             page = conditionRepository.findAllSortedByLifeStage(lifeStage, pageable);
         } else {
             page = conditionRepository.findAll(pageable);
