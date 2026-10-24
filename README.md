@@ -1,2 +1,2 @@
-# textbook-vs-her
+# heardYou
 A whole-body women's health education and symptom-pattern exploration platform.
