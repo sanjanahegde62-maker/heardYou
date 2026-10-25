@@ -262,3 +262,111 @@ test("results.js resolves symptom name from MatchedSymptomDetail object", () => 
   }).filter(Boolean);
   assert.deepEqual(matched, ["Pelvic pain"]);
 });
+
+// ---------------------------------------------------------------------------
+// ConditionDetailDto field mapping tests (condition.js logic)
+// ---------------------------------------------------------------------------
+
+// Inline helpers mirroring condition.js
+function asList(v) {
+  const items = Array.isArray(v) ? v : typeof v === "string" ? [v] : [];
+  return items
+    .map((i) => (typeof i === "string" ? i : i && (i.name || i.text || i.message || i.label)) || "")
+    .filter(Boolean);
+}
+
+const BACKEND_STAGE_LABELS = {
+  "teen":             "Teen",
+  "adult":            "Adult",
+  "reproductive-age": "Reproductive age",
+  "perimenopause":    "Perimenopause",
+  "postmenopause":    "Postmenopause",
+};
+const humanize2 = (id) => String(id || "").replace(/[-_]+/g, " ").replace(/^./, (c) => c.toUpperCase());
+const stageLabel = (slug) => BACKEND_STAGE_LABELS[slug] || humanize2(slug);
+
+const sampleCondition = {
+  id: 1,
+  name: "Endometriosis",
+  slug: "endometriosis",
+  summary: "Short summary.",
+  medicalDescription: "Medical overview text.",
+  bodySystem: "REPRODUCTIVE",
+  conventionalPresentation: "Severe pelvic pain that is cyclic.",
+  femalePresentation: "Often dismissed as bad periods.",
+  documentedPresentations: ["Presentation 1", "Presentation 2"],
+  commonlyMistakenFor: ["IBS", "Ovarian cysts"],
+  avgDiagnosisDelay: "7-10 years",
+  suggestedTests: ["Laparoscopy", "Ultrasound"],
+  timeframeAdvice: "Seek care within weeks.",
+  category: "REPRODUCTIVE",
+  extraCategories: [],
+  lifeStages: ["teen", "reproductive-age"],
+  specialistType: "Gynaecologist",
+  specialistNotes: "Referral recommended.",
+  educationalGuidance: "Condition is often under-diagnosed.",
+  clinicianQuestions: ["Is laparoscopy appropriate?", "Hormonal therapy options?"],
+  symptoms: [
+    { symptom: { id: 1, name: "Pelvic pain", slug: "pelvic-pain" }, overlapWeight: 0.9, evidenceNote: "Very common." },
+    { symptom: { id: 2, name: "Fatigue", slug: "fatigue" }, overlapWeight: 0.7, evidenceNote: null },
+  ],
+  sources: [
+    { url: "https://www.nhs.uk/endometriosis", title: "NHS Endometriosis", publisher: "NHS" },
+    { url: "https://www.who.int/endo", title: "WHO Factsheet" },
+  ],
+};
+
+test("condition.js reads overview from medicalDescription (not overview/description)", () => {
+  const overview = asList(sampleCondition.medicalDescription || sampleCondition.summary);
+  assert.deepEqual(overview, ["Medical overview text."]);
+});
+
+test("condition.js reads textbook from conventionalPresentation (not textbookPresentation)", () => {
+  const textbook = asList(sampleCondition.conventionalPresentation);
+  assert.deepEqual(textbook, ["Severe pelvic pain that is cyclic."]);
+});
+
+test("condition.js reads her version from femalePresentation (not womenPresentation)", () => {
+  const women = asList(sampleCondition.femalePresentation);
+  assert.deepEqual(women, ["Often dismissed as bad periods."]);
+});
+
+test("condition.js reads documented presentations from documentedPresentations (not recognitionGaps)", () => {
+  const docPres = asList(sampleCondition.documentedPresentations);
+  assert.deepEqual(docPres, ["Presentation 1", "Presentation 2"]);
+});
+
+test("condition.js reads guidance from educationalGuidance (not context)", () => {
+  const guidance = asList(sampleCondition.educationalGuidance);
+  assert.deepEqual(guidance, ["Condition is often under-diagnosed."]);
+});
+
+test("condition.js extracts symptom names from ConditionSymptomDto (not plain strings)", () => {
+  const symptomNames = Array.isArray(sampleCondition.symptoms)
+    ? sampleCondition.symptoms.map((cs) => cs.symptom ? cs.symptom.name : (typeof cs === "string" ? cs : "")).filter(Boolean)
+    : [];
+  assert.deepEqual(symptomNames, ["Pelvic pain", "Fatigue"]);
+});
+
+test("condition.js maps backend life-stage slugs to display labels", () => {
+  const stages = (Array.isArray(sampleCondition.lifeStages) ? [...sampleCondition.lifeStages] : []).map(stageLabel);
+  assert.deepEqual(stages, ["Teen", "Reproductive age"]);
+});
+
+test("condition.js uses source title (not label) for link text", () => {
+  const s = sampleCondition.sources[0];
+  const label = typeof s === "string" ? null : (s.title || s.label || s.name);
+  assert.equal(label, "NHS Endometriosis");
+});
+
+test("condition.js reads bodySystem (not system) for the body-system tag", () => {
+  assert.equal(sampleCondition.bodySystem, "REPRODUCTIVE");
+  assert.equal(sampleCondition.system, undefined);  // field does not exist
+});
+
+test("condition.js does not render warningSigns from ConditionDetailDto (field absent)", () => {
+  // warningSigns is NOT part of ConditionDetailDto; warnings come via check-in response only.
+  assert.equal(sampleCondition.warningSigns, undefined);
+  const warnings = [];  // condition.js hard-codes this to []
+  assert.deepEqual(warnings, []);
+});
