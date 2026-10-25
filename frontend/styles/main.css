@@ -1315,26 +1315,6 @@ body.know {
   background: #fff6f9;               /* soft pink the photo fades into */
 }
 
-body.know::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 760px;                      /* how far down the photo reaches */
-  z-index: -1;                        /* behind all page content */
-  pointer-events: none;
-  background: #fbd1dc url("../assets/know-bg.jpg") center 60% / cover no-repeat;
-
-  /* eased S-curve fade, same idea as the header */
-  -webkit-mask-image: linear-gradient(to bottom,
-    #000 0%, rgba(0,0,0,.98) 15%, rgba(0,0,0,.9) 30%,
-    rgba(0,0,0,.7) 45%, rgba(0,0,0,.42) 60%,
-    rgba(0,0,0,.18) 75%, rgba(0,0,0,.05) 88%, transparent 100%);
-          mask-image: linear-gradient(to bottom,
-    #000 0%, rgba(0,0,0,.98) 15%, rgba(0,0,0,.9) 30%,
-    rgba(0,0,0,.7) 45%, rgba(0,0,0,.42) 60%,
-    rgba(0,0,0,.18) 75%, rgba(0,0,0,.05) 88%, transparent 100%);
-}
-
 /* ===== Ribbon: crisp outlined style (old bow colour) ===== */
 .ribbon.hero__bow {
   width: 68px;
