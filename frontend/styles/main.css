@@ -1433,3 +1433,26 @@ body.match::after {
   body.match::before,
   body.match::after { display: none; }
 }
+
+/* ===== KNOW page: plum line-art illustration, bottom right ===== */
+body.know::after {
+  content: "";
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: min(900px, 70vw);
+  aspect-ratio: 735 / 320;
+  z-index: -1;
+  pointer-events: none;
+  background: url("../assets/line-girl.jpg") right bottom / contain no-repeat;
+  filter: url(#plum-line);            /* black lines → plum, white → transparent */
+  opacity: .55;
+
+  /* fade the left end of the baseline out softly */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 40%);
+          mask-image: linear-gradient(to right, transparent 0%, #000 40%);
+}
+
+@media (max-width: 800px) {
+  body.know::after { display: none; }
+}
