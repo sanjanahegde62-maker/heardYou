@@ -1,4 +1,4 @@
-# 💗 heardYou
+# heardYou
 ### Every symptom deserves to be heard.
 ### A whole-body women's health education and symptom-pattern exploration platform.
 
