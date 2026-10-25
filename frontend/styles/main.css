@@ -1394,3 +1394,42 @@ body.act::before {
 body.act .site-footer {
   background: none;
 }
+
+/* ===== MATCH page: peony flowers in the corners, behind the form ===== */
+body.match {
+  background: linear-gradient(180deg, #fff3f7 0%, #ffe4ed 100%) fixed;
+}
+
+body.match::before,
+body.match::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  background: url("../assets/match-bg.jpg") center / contain no-repeat;
+  mix-blend-mode: multiply;           /* makes the white photo background vanish */
+}
+
+/* main bouquet: right side */
+body.match::before {
+  top: 150px;
+  right: -90px;
+  width: min(520px, 42vw);
+  aspect-ratio: 1200 / 1450;
+  opacity: .9;
+}
+
+/* smaller mirrored bouquet: bottom-left */
+body.match::after {
+  bottom: -140px;
+  left: -110px;
+  width: min(400px, 34vw);
+  aspect-ratio: 1200 / 1450;
+  opacity: .7;
+  transform: scaleX(-1) rotate(-12deg);
+}
+
+@media (max-width: 900px) {
+  body.match::before,
+  body.match::after { display: none; }
+}
