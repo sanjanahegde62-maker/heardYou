@@ -32,6 +32,7 @@
   /* fonts */
   --script: "Great Vibes", "Segoe Script", "Brush Script MT", cursive;
   --serif: Georgia, "Times New Roman", serif;
+  --wordmark: "Plus Jakarta Sans", "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
 /* ---------- Base ---------- */
@@ -64,7 +65,7 @@ a { color: var(--purple-700); }
   );
   border-bottom: 1px solid rgba(110, 23, 72, 0.08);
 }
-.site-header h1 { margin: 0; font-size: 1.35rem;  color: rgb(246, 101, 249); }
+.site-header h1 { margin: 0; font-size: 1.35rem; font-family: var(--wordmark); font-weight: 700; letter-spacing: -0.02em; }
 
 .steps {
   display: flex;
@@ -401,7 +402,7 @@ main {
   .receipt-dialog[open] { animation: none; }
 }
 /* ---------- Check-in form ---------- */
-.site-header h1 a { color: #fff; text-decoration: none; }
+.site-header h1 a { color: var(--rose-900); text-decoration: none; background: linear-gradient(90deg, var(--rose-900), var(--rose-700)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .page-title {
   margin: 0.5rem 0;
   font-family: var(--serif);
@@ -1206,7 +1207,13 @@ html { scroll-behavior: smooth; }
     rgba(255, 138, 172, 0) 100%
   );
 }
-.site-header h1 a,
+.site-header h1 a {
+  color: var(--ink-dark);
+  background: linear-gradient(90deg, var(--ink-dark), var(--rose-700));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 .site-nav a { color: var(--ink-dark); }
 .site-nav .site-nav__cta { color: #fff !important; background: var(--ink-dark); }
 .steps li { color: var(--ink-dark); background: rgba(255, 255, 255, 0.45); }
