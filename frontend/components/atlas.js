@@ -1,5 +1,5 @@
 import { listConditions, searchContent } from "../services/conditions.js";
-import { LIFE_STAGES } from "../utils/validation.js";
+import { LIFE_STAGES, LIFE_STAGE_BACKEND_MAP } from "../utils/validation.js";
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) =>
@@ -7,7 +7,13 @@ const esc = (s) =>
 
 // Use the backend's label if it sends one; otherwise tidy the identifier for display only.
 const humanize = (id) => String(id || "").replace(/[-_]+/g, " ").replace(/^./, (c) => c.toUpperCase());
-const systemLabel = (c) => c.systemLabel || humanize(c.system);
+
+/**
+ * Returns a displayable system label for a condition summary DTO.
+ * Backend sends `bodySystem` (e.g. "REPRODUCTIVE"), not `system`.
+ * The mock data sends `systemLabel` and `system`.
+ */
+const systemLabel = (c) => c.systemLabel || humanize(c.bodySystem || c.system || "");
 
 const filters = { system: "", stage: "" };
 let requestId = 0;      // newest request wins; older responses are ignored
@@ -29,7 +35,11 @@ function showError(message, retry) {
 function buildSystemOptions(items) {
   if (!Array.isArray(items)) return;
   const seen = new Map();
-  items.forEach((c) => { if (c.system && !seen.has(c.system)) seen.set(c.system, systemLabel(c)); });
+  items.forEach((c) => {
+    // Backend DTO uses bodySystem; mock data uses system.
+    const sys = c.bodySystem || c.system;
+    if (sys && !seen.has(sys)) seen.set(sys, systemLabel(c));
+  });
   $("filter-system").innerHTML =
     `<option value="">All body systems</option>` +
     [...seen].map(([id, label]) => `<option value="${esc(id)}">${esc(label)}</option>`).join("");
@@ -38,12 +48,14 @@ function buildSystemOptions(items) {
 
 function card(c) {
   const slug = typeof c.slug === "string" && /^[a-z0-9-]+$/i.test(c.slug) ? c.slug : "";
-  const text = c.description || c.snippet || "";
+  // Backend ConditionSummaryDto uses `summary` (not `description`).
+  // Mock data uses `description`.
+  const text = c.summary || c.description || c.snippet || "";
   const inner = `
-    ${c.system ? `<span class="ccard__tag">${esc(systemLabel(c))}</span>` : ""}
+    ${(c.bodySystem || c.system) ? `<span class="ccard__tag">${esc(systemLabel(c))}</span>` : ""}
     <h3>${esc(c.name || "Untitled")}</h3>
     ${text ? `<p>${esc(text)}</p>` : ""}
-    ${slug ? `<span class="ccard__more">Read more ›</span>` : ""}`;
+    ${slug ? `<span class="ccard__more">Read more \u2192</span>` : ""}`;
   return `<li>${
     slug
       ? `<a class="ccard" href="condition.html?slug=${encodeURIComponent(slug)}">${inner}</a>`
@@ -65,7 +77,7 @@ function renderCards(items, isSearch) {
 async function load(task, isSearch) {
   const id = ++requestId;
   showError(null);
-  setStatus(isSearch ? "Searching…" : "Loading conditions…");
+  setStatus(isSearch ? "Searching\u2026" : "Loading conditions\u2026");
   try {
     const items = await task();
     if (id !== requestId) return;
@@ -87,7 +99,10 @@ $("filter-system").addEventListener("change", (e) => {
   loadGrid();
 });
 $("filter-stage").addEventListener("change", (e) => {
-  filters.stage = e.target.value;
+  // The select value is the frontend enum (e.g. ADULT_20_39).
+  // Translate it to the backend slug (e.g. "adult") before sending.
+  const frontendVal = e.target.value;
+  filters.stage = frontendVal ? (LIFE_STAGE_BACKEND_MAP[frontendVal] || frontendVal) : "";
   $("atlas-search").value = "";
   loadGrid();
 });
@@ -98,7 +113,7 @@ $("atlas-search").addEventListener("input", (e) => {
   searchTimer = setTimeout(() => load(() => searchContent(q), true), 300);
 });
 
-// first paint
+// first paint — populate the stage filter dropdown with frontend display values
 $("filter-stage").innerHTML =
   `<option value="">All life stages</option>` +
   LIFE_STAGES.map((s) => `<option value="${s.value}">${esc(s.label)}</option>`).join("");

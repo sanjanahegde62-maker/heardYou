@@ -1,14 +1,29 @@
 export const LIFE_STAGES = [
-  { value: "TEEN", label: "Teen" },
-  { value: "ADULT_20_39", label: "Adult, 20–39" },
-  { value: "PREGNANCY_POSTPARTUM", label: "Pregnancy / postpartum" },
-  { value: "PERIMENOPAUSE_40S", label: "Perimenopause (around 40s)" },
-  { value: "MENOPAUSE_50_PLUS", label: "Menopause (50+)" },
+  { value: "TEEN",                  label: "Teen" },
+  { value: "ADULT_20_39",           label: "Adult, 20\u201339" },
+  { value: "PREGNANCY_POSTPARTUM",  label: "Pregnancy / postpartum" },
+  { value: "PERIMENOPAUSE_40S",     label: "Perimenopause (around 40s)" },
+  { value: "MENOPAUSE_50_PLUS",     label: "Menopause (50+)" },
 ];
+
+/**
+ * Maps each frontend life-stage value to the slug the backend accepts.
+ * Backend allowed values: teen | adult | reproductive-age | perimenopause | postmenopause
+ *
+ * PREGNANCY_POSTPARTUM has no exact backend equivalent; "reproductive-age" is the
+ * closest category the backend supports and is used as the mapping.
+ */
+export const LIFE_STAGE_BACKEND_MAP = {
+  TEEN:                 "teen",
+  ADULT_20_39:          "adult",
+  PREGNANCY_POSTPARTUM: "reproductive-age",
+  PERIMENOPAUSE_40S:    "perimenopause",
+  MENOPAUSE_50_PLUS:    "postmenopause",
+};
 
 export const DURATIONS = [
   { value: "UNDER_1_WEEK", label: "Under 1 week" },
-  { value: "1_TO_4_WEEKS", label: "1–4 weeks" },
+  { value: "1_TO_4_WEEKS", label: "1\u20134 weeks" },
   { value: "OVER_1_MONTH", label: "Over 1 month" },
 ];
 
@@ -49,9 +64,10 @@ export function validateCheckin({ lifeStage, symptoms }) {
 }
 
 // Only these fields are sent to the backend (no names, no extras).
+// lifeStage is translated from the frontend enum value to the backend slug.
 export function toCheckinPayload({ lifeStage, symptoms }) {
   return {
-    lifeStage,
+    lifeStage: LIFE_STAGE_BACKEND_MAP[lifeStage] || lifeStage,
     symptoms: symptoms.map(({ slug, severity, duration }) => ({ slug, severity, duration })),
   };
 }

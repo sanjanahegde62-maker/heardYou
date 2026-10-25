@@ -1,5 +1,6 @@
 import { CONFIG } from "../config.js";
 import { ApiError, postJson } from "./api.js";
+import { LIFE_STAGE_BACKEND_MAP } from "../utils/validation.js";
 
 const FILENAME = "heardyou-health-brief.pdf";
 
@@ -13,7 +14,8 @@ export async function downloadBrief({ lifeStage, symptoms, selectedSlugs, displa
   }
 
   const payload = {
-    lifeStage,
+    // Translate frontend life-stage enum to backend slug before sending.
+    lifeStage: LIFE_STAGE_BACKEND_MAP[lifeStage] || lifeStage,
     symptoms: symptoms.map(({ slug, severity, duration }) => ({ slug, severity, duration })),
     selectedSlugs,
     displayName: displayName || "",
