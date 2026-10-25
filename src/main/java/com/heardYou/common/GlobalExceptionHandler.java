@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
 import java.util.List;
@@ -68,6 +69,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                         "Missing required parameter: " + ex.getParameterName()));
+    }
+
+    /**
+     * In Spring MVC 6 (Spring Boot 3+), requests for unmapped static paths (e.g. /favicon.ico, /)
+     * throw NoResourceFoundException instead of the old NoHandlerFoundException.
+     * Without this handler it falls through to handleGeneric and returns 500 — wrong.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResource(NoResourceFoundException ex) {
+        // 404 — log at DEBUG only; this is normal browser behaviour, not an error.
+        log.debug("No resource found: {}", ex.getResourcePath());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Not found"));
     }
 
     @ExceptionHandler(Exception.class)
