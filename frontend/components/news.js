@@ -1,54 +1,63 @@
 import { NEWS } from "../mocks/newsData.js";
 
-// Escape text before putting it in HTML (important once real data arrives)
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
 const isLink = (u) => typeof u === "string" && /^https?:\/\//i.test(u);
+const tone = (i) => (i % 4) + 1; // cycles the four gradient themes
+const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const bow = (extra = "") =>
-  `<svg class="bow ${extra}" viewBox="0 0 64 40" aria-hidden="true" focusable="false"><use href="#bow"></use></svg>`;
-
-function cardHtml(item, i) {
+// ---- small ticket on the board ----
+function ticket(item, i) {
   return `
     <li>
-      <button type="button" class="rcard" data-index="${i}" aria-haspopup="dialog">
-        <span class="rcard__script">Health News</span>
-        <span class="rcard__meta"><span>No. ${esc(item.no)}</span><span>${esc(item.date)}</span></span>
-        <span class="rcard__tag">♡ ${esc(item.tag)}</span>
-        <span class="rcard__title">${esc(item.title)}</span>
-        <span class="rcard__summary">${esc(item.summary)}</span>
-        <span class="rcard__more">Open receipt ›</span>
-        <span class="rcard__barcode" aria-hidden="true"></span>
-      </button>
+      <div class="tk-wrap tk-wrap--${tone(i)}">
+        <button type="button" class="tk" data-index="${i}" aria-haspopup="dialog">
+          <span class="tk__top">
+            <span class="tk__num">${esc(item.no)}</span>
+            <span class="tk__tag">${esc(item.tag)}</span>
+            <span class="tk__title">${esc(item.title)}</span>
+            <span class="tk__summary">${esc(item.summary)}</span>
+          </span>
+          <span class="tk__stub">
+            <span class="tk__date">${esc(item.date)}</span>
+            <span class="tk__open">Open ticket ›</span>
+            <span class="tk__barcode" aria-hidden="true"></span>
+          </span>
+        </button>
+      </div>
     </li>`;
 }
 
-function receiptHtml(item) {
-  const points = item.points.map((p) => `<li>${esc(p)}</li>`).join("");
+// ---- expanded (horizontal) ticket inside the dialog ----
+function bigTicket(item, i) {
+  const points = (item.points || []).map((p) => `<li>${esc(p)}</li>`).join("");
   const link = isLink(item.url)
-    ? `<a class="receipt__link" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Read the full story ↗</a>`
-    : `<span class="receipt__link receipt__link--off">Link will be added</span>`;
+    ? `<a class="tk__link" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Read the news ↗</a>`
+    : `<span class="tk__link tk__link--off">News link coming soon</span>`;
 
   return `
-    <div class="receipt">
-      <div class="receipt__top">
-        ${bow()}
-        <h3 class="receipt__script">Health News</h3>
-        <button type="button" class="receipt__close" aria-label="Close">✕</button>
+    <div class="tk-wrap tk-wrap--big tk-wrap--${tone(i)}">
+      <div class="tk tk--big">
+        <div class="tk__top tk__top--big">
+          <div class="tk__bar">
+            <span class="tk__num">No. ${esc(item.no)}</span>
+            <button type="button" class="tk__close" aria-label="Close">✕</button>
+          </div>
+          <span class="tk__tag">${esc(item.tag)}</span>
+          <h3 class="tk__title" id="tk-title">${esc(item.title)}</h3>
+          <p class="tk__summary">${esc(item.summary)}</p>
+          ${points ? `<ol class="tk__points">${points}</ol>` : ""}
+          <p class="tk__disclaimer">Educational information, not medical advice. If you're worried or something feels very wrong, seek care now. In an emergency, call your local emergency number (112 in India).</p>
+        </div>
+        <div class="tk__stub tk__stub--big">
+          <div class="tk__meta">
+            <span class="tk__date">${esc(item.date)}</span>
+            <span>Source: ${esc(item.source)}</span>
+          </div>
+          ${link}
+          <span class="tk__barcode" aria-hidden="true"></span>
+        </div>
       </div>
-      <p class="receipt__thanks">Thank you for reading!</p>
-      <div class="receipt__row"><span>No.: ${esc(item.no)}</span><span>Date: ${esc(item.date)}</span></div>
-      <div class="receipt__cols"><span>Story</span><span>♡ ${esc(item.tag)}</span></div>
-      <h4 class="receipt__title" id="receipt-title">${esc(item.title)}</h4>
-      <p class="receipt__summary">${esc(item.summary)}</p>
-      <ol class="receipt__points">${points}</ol>
-      <div class="receipt__total"><span class="receipt__script-sm">Source:</span><span>${esc(item.source)}</span></div>
-      <p class="receipt__notify">Want more? Read the full story:</p>
-      ${link}
-      <div class="receipt__barcode" aria-hidden="true"></div>
-      <div class="receipt__bottom">${bow("bow--flip")}${bow("bow--flip-x")}</div>
-      <p class="receipt__disclaimer">Educational information, not medical advice. If you're worried or something feels very wrong, seek care now. In an emergency, call your local emergency number (112 in India).</p>
     </div>`;
 }
 
@@ -56,18 +65,77 @@ const list = document.getElementById("news-list");
 const dialog = document.getElementById("receipt-dialog");
 
 if (list && dialog) {
-  list.innerHTML = NEWS.map(cardHtml).join("");
+  let opener = null;   // the small ticket that was clicked
+  let closing = false;
 
-  list.addEventListener("click", (e) => {
-    const btn = e.target.closest(".rcard");
-    if (!btn) return;
-    dialog.innerHTML = receiptHtml(NEWS[Number(btn.dataset.index)]);
-    dialog.setAttribute("aria-labelledby", "receipt-title");
-    dialog.showModal();
+  const morph = (from, to) => ({
+    dx: from.left - to.left,
+    dy: from.top - to.top,
+    sx: from.width / to.width,
+    sy: from.height / to.height,
   });
 
-  // Close with the X button or by clicking the blurred background. Esc works automatically.
+  // The small ticket expands into the big one (FLIP-style morph)
+  function openTicket(btn) {
+    const i = Number(btn.dataset.index);
+    opener = btn;
+    const from = btn.getBoundingClientRect();
+
+    dialog.innerHTML = bigTicket(NEWS[i], i);
+    dialog.setAttribute("aria-labelledby", "tk-title");
+    dialog.showModal();
+    if (reduceMotion()) return;
+
+    const el = dialog.querySelector(".tk-wrap--big");
+    const { dx, dy, sx, sy } = morph(from, el.getBoundingClientRect());
+    el.animate(
+      [
+        { transformOrigin: "top left", transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
+        { transformOrigin: "top left", transform: "translate(0, 0) scale(1, 1)" },
+      ],
+      { duration: 380, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" }
+    );
+    // text fades in while the shape grows, so it never looks stretched
+    dialog.querySelectorAll(".tk__top--big, .tk__stub--big").forEach((part) =>
+      part.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 240, delay: 150, easing: "ease-out", fill: "backwards" })
+    );
+  }
+
+  // ...and shrinks back into the ticket it came from
+  function closeTicket() {
+    if (closing || !dialog.open) return;
+    const el = dialog.querySelector(".tk-wrap--big");
+    if (reduceMotion() || !el || !opener || !opener.isConnected) {
+      dialog.close();
+      return;
+    }
+    closing = true;
+    const { dx, dy, sx, sy } = morph(opener.getBoundingClientRect(), el.getBoundingClientRect());
+    const done = () => { dialog.close(); closing = false; };
+    el.animate(
+      [
+        { transformOrigin: "top left", transform: "translate(0, 0) scale(1, 1)", opacity: 1 },
+        { transformOrigin: "top left", transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`, opacity: 0 },
+      ],
+      { duration: 280, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" }
+    ).finished.then(done, done);
+  }
+
+  list.innerHTML = NEWS.map(ticket).join("");
+
+  list.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tk");
+    if (btn) openTicket(btn);
+  });
+
+  // X button, or a click on the dimmed background
   dialog.addEventListener("click", (e) => {
-    if (e.target === dialog || e.target.closest(".receipt__close")) dialog.close();
+    if (e.target === dialog || e.target.closest(".tk__close")) closeTicket();
+  });
+
+  // Esc key: use the same shrink-back animation
+  dialog.addEventListener("cancel", (e) => {
+    e.preventDefault();
+    closeTicket();
   });
 }

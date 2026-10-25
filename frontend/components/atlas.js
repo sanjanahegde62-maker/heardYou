@@ -46,7 +46,7 @@ function card(c) {
     ${slug ? `<span class="ccard__more">Read more ›</span>` : ""}`;
   return `<li>${
     slug
-      ? `<a class="ccard" href="pages/condition.html?slug=${encodeURIComponent(slug)}">${inner}</a>`
+      ? `<a class="ccard" href="condition.html?slug=${encodeURIComponent(slug)}">${inner}</a>`
       : `<div class="ccard">${inner}</div>`
   }</li>`;
 }

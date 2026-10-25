@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Explore conditions · Textbook vs. Her</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1><a href="../index.html">Textbook vs. Her</a></h1>
+    <ol class="steps" aria-label="Your progress">
+      <li aria-current="step">KNOW</li>
+      <li>MATCH</li>
+      <li>ACT</li>
+    </ol>
+  </header>
+
+  <main>
+    <p><a href="../index.html">← Back to home</a></p>
+    <section class="atlas" aria-labelledby="atlas-title">
+      <h2 id="atlas-title" class="page-title">Explore conditions</h2>
+      <p class="lead">
+        See how conditions are usually described in textbooks and how they may show up in women.
+        Educational information only.
+      </p>
+      <p><a class="btn" href="checkin.html">Start symptom check-in</a></p>
+
+      <div class="atlas-tools panel">
+        <div>
+          <label for="atlas-search">Search by name, symptom or keyword</label>
+          <input id="atlas-search" type="search" autocomplete="off" placeholder="For example: fatigue" />
+        </div>
+        <div>
+          <label for="filter-system">Body system</label>
+          <select id="filter-system"><option value="">All body systems</option></select>
+        </div>
+        <div>
+          <label for="filter-stage">Life stage</label>
+          <select id="filter-stage"><option value="">All life stages</option></select>
+        </div>
+      </div>
+
+      <p id="atlas-status" class="status" role="status" aria-live="polite"></p>
+      <div id="atlas-error" class="error-box" role="alert" tabindex="-1" hidden></div>
+      <ul id="atlas-grid" class="ccard-grid"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    Educational information, not medical advice. If you're worried or something feels very wrong, seek care now. In an emergency, call your local emergency number (112 in India).
+  </footer>
+
+  <script type="module" src="../config.js"></script>
+  <script type="module" src="../components/atlas.js"></script>
+</body>
+</html>

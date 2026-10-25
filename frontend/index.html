@@ -9,8 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles/main.css" />
 </head>
-<body>
-  <!-- bow drawing, reused by the receipts -->
+<body class="landing">
+  <!-- bow drawing, reused by the hero and the receipts -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <symbol id="bow">
       <path d="M32 20 C22 4 4 2 3 18 C2 33 21 36 32 20Z" />
@@ -21,48 +21,78 @@
     </symbol>
   </svg>
 
-  <header class="site-header">
-    <h1>Textbook vs. Her</h1>
-    <ol class="steps" aria-label="Your progress">
-      <li aria-current="step">KNOW</li>
-      <li>MATCH</li>
-      <li>ACT</li>
-    </ol>
+  <header class="site-header site-header--bar">
+    <h1><a href="index.html">Textbook vs. Her</a></h1>
+    <nav class="site-nav" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#news-title">News</a>
+      <a href="pages/know.html">Explore</a>
+      <a href="pages/checkin.html" class="site-nav__cta">Check-in</a>
+    </nav>
   </header>
 
-  <main id="app">
-    <section class="atlas" aria-labelledby="atlas-title">
-      <h2 id="atlas-title" class="page-title">Explore conditions</h2>
-      <p class="lead">
-        See how conditions are usually described in textbooks and how they may show up in women.
-        Educational information only.
+  <main>
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <svg class="bow hero__bow hero__bow--l" viewBox="0 0 64 40" aria-hidden="true" focusable="false"><use href="#bow"></use></svg>
+      <svg class="bow hero__bow hero__bow--r" viewBox="0 0 64 40" aria-hidden="true" focusable="false"><use href="#bow"></use></svg>
+      <p class="hero__eyebrow">Women's health, whole body</p>
+      <h2 id="hero-title" class="hero__title">Textbook <span>vs.</span> Her</h2>
+      <p class="hero__lead">
+        Conditions are often described one way in textbooks, and can show up differently in women.
+        Learn what's documented, explore how your symptoms overlap, and walk into your appointment prepared.
       </p>
-      <p><a class="btn" href="pages/checkin.html">Start symptom check-in</a></p>
-
-      <div class="atlas-tools panel">
-        <div>
-          <label for="atlas-search">Search by name, symptom or keyword</label>
-          <input id="atlas-search" type="search" autocomplete="off" placeholder="For example: fatigue" />
-        </div>
-        <div>
-          <label for="filter-system">Body system</label>
-          <select id="filter-system"><option value="">All body systems</option></select>
-        </div>
-        <div>
-          <label for="filter-stage">Life stage</label>
-          <select id="filter-stage"><option value="">All life stages</option></select>
-        </div>
+      <div class="hero__actions">
+        <a class="btn btn--light" href="pages/checkin.html">Start symptom check-in</a>
+        <a class="btn btn--outline-light" href="pages/know.html">Explore conditions</a>
       </div>
-
-      <p id="atlas-status" class="status" role="status" aria-live="polite"></p>
-      <div id="atlas-error" class="error-box" role="alert" tabindex="-1" hidden></div>
-      <ul id="atlas-grid" class="ccard-grid"></ul>
+      <p class="hero__note">Free. No account. Educational information, not a diagnosis.</p>
     </section>
 
-    <section class="news" aria-labelledby="news-title">
+    <!-- HOW IT WORKS -->
+    <section id="how" class="flow" aria-labelledby="how-title">
+      <p class="eyebrow">How it works</p>
+      <h2 id="how-title" class="flow__title">Three steps: know, match, act</h2>
+      <ol class="flow__steps">
+        <li class="flow__step">
+          <span class="flow__num" aria-hidden="true">1</span>
+          <h3>KNOW</h3>
+          <p>Browse conditions and see how they're usually described next to how they may present in women, with sources.</p>
+          <a class="flow__link" href="pages/know.html">Explore conditions ›</a>
+        </li>
+        <li class="flow__step">
+          <span class="flow__num" aria-hidden="true">2</span>
+          <h3>MATCH</h3>
+          <p>Tell us your symptoms, how strong they are and for how long, to see which conditions have overlapping documented symptoms.</p>
+          <a class="flow__link" href="pages/checkin.html">Start a check-in ›</a>
+        </li>
+        <li class="flow__step">
+          <span class="flow__num" aria-hidden="true">3</span>
+          <h3>ACT</h3>
+          <p>Review published warning signs, get questions to ask, and download a one-page brief for your doctor.</p>
+          <a class="flow__link" href="pages/checkin.html">See how it ends ›</a>
+        </li>
+      </ol>
+      <p class="note flow__privacy">
+        Your answers stay in this browser tab only and are cleared when you close it or press Start over.
+      </p>
+    </section>
+
+    <!-- NEWS -->
+    <section class="news news--board" aria-labelledby="news-title">
       <p class="eyebrow">Current news</p>
       <h2 id="news-title">Women's health in the news</h2>
       <ul class="receipt-grid" id="news-list"></ul>
+    </section>
+
+    <!-- FINAL CALL TO ACTION -->
+    <section class="cta" aria-labelledby="cta-title">
+      <h2 id="cta-title">Ready to get started?</h2>
+      <p>Begin with the conditions, or go straight to your symptoms.</p>
+      <div class="hero__actions">
+        <a class="btn btn--light" href="pages/know.html">Explore conditions</a>
+        <a class="btn btn--outline-light" href="pages/checkin.html">Start check-in</a>
+      </div>
     </section>
   </main>
 
@@ -73,7 +103,6 @@
   </footer>
 
   <script type="module" src="config.js"></script>
-  <script type="module" src="components/atlas.js"></script>
   <script type="module" src="components/news.js"></script>
 </body>
 </html>

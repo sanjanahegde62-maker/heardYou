@@ -98,14 +98,14 @@ function render(c) {
     <p class="note">Educational information only. Differences are shown only where reliable sources document them.</p>
     <div class="detail-cta">
       <a class="btn" href="checkin.html">Start symptom check-in</a>
-      <a class="btn btn--ghost" href="../index.html">Back to all conditions</a>
+      <a class="btn btn--ghost" href="know.html">Back to all conditions</a>
     </div>`;
 }
 
 function showProblem(message) {
   root.innerHTML = `
     <div class="error-box" role="alert"><p>${esc(message)}</p></div>
-    <p><a class="btn btn--ghost" href="../index.html">Back to all conditions</a></p>`;
+    <p><a class="btn btn--ghost" href="know.html">Back to all conditions</a></p>`;
 }
 
 async function start() {
