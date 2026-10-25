@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your results · Textbook vs. Her</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1><a href="../index.html">Textbook vs. Her</a></h1>
+    <ol class="steps" aria-label="Your progress">
+      <li>KNOW</li>
+      <li>MATCH</li>
+      <li aria-current="step">ACT</li>
+    </ol>
+  </header>
+
+  <main>
+    <h2 class="page-title">Your results</h2>
+
+    <!-- shown when there is no check-in in this tab (cleared or expired) -->
+    <section id="expired" class="panel" hidden>
+      <h3>No check-in found</h3>
+      <p>Your check-in isn't saved in this tab, so there are no results to show. Start a new check-in to see them.</p>
+      <p><a class="btn" href="checkin.html">Start a check-in</a></p>
+    </section>
+
+    <div id="content" hidden>
+      <p id="disclaimer" class="disclaimer-block"></p>
+
+      <details class="panel" id="answers-panel">
+        <summary>Your check-in</summary>
+        <div id="answers"></div>
+        <p><a href="checkin.html">← Edit my answers</a></p>
+      </details>
+
+      <!-- Published warning signs: separate from patterns, never hidden by a low match -->
+      <section id="warnings" class="warning-box" aria-labelledby="warn-title" hidden>
+        <h2 id="warn-title">Published warning signs</h2>
+        <p>These come from published sources. They are shown separately from the symptom patterns below and don't depend on them.</p>
+        <ul id="warning-list" class="warning-list"></ul>
+      </section>
+
+      <section aria-labelledby="pat-title">
+        <h2 id="pat-title" class="section-title">Symptom patterns worth discussing</h2>
+        <p class="note">
+          Pattern overlap shows how closely your symptoms line up with what is documented for a condition.
+          It is not a diagnosis, and it is not the chance that you have it. Only a healthcare professional can tell you that.
+        </p>
+        <ul id="pattern-list" class="pattern-list"></ul>
+      </section>
+
+      <section class="panel" aria-labelledby="brief-title">
+        <h2 id="brief-title" class="section-title">Doctor-ready brief</h2>
+        <p>
+          Download a PDF with your symptoms and the patterns ticked above, plus questions to ask and tests to discuss.
+          Bring it to your appointment.
+        </p>
+        <label for="display-name">Name on the brief (optional)</label>
+        <input id="display-name" type="text" maxlength="60" autocomplete="name" />
+        <div id="pdf-error" class="error-box" role="alert" tabindex="-1" hidden></div>
+        <p id="pdf-status" class="status" role="status" aria-live="polite"></p>
+        <div class="actions">
+          <button type="button" class="btn" id="download-btn">Download PDF brief</button>
+          <button type="button" class="btn btn--ghost" id="start-over">Start over</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    Educational information, not medical advice. If you're worried or something feels very wrong, seek care now. In an emergency, call your local emergency number (112 in India).
+  </footer>
+
+  <script type="module" src="../components/results.js"></script>
+</body>
+</html>
