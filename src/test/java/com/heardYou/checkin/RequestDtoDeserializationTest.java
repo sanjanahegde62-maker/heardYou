@@ -3,6 +3,7 @@ package com.heardYou.checkin;
 import com.heardYou.brief.BriefRequest;
 import com.heardYou.condition.ConditionRepository;
 import com.heardYou.condition.ConditionSymptomRepository;
+import com.heardYou.config.DataLoader;
 import com.heardYou.source.MedicalSourceRepository;
 import com.heardYou.symptom.SymptomRepository;
 import com.heardYou.warning.WarningSignRepository;
@@ -12,15 +13,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import tools.jackson.databind.ObjectMapper;
 
+import javax.sql.DataSource;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies that the Spring-configured ObjectMapper (with JacksonConfig applied)
  * correctly deserializes the application's private-field request DTOs.
  *
- * This test loads the full Spring context (mocking JPA to avoid needing a DB)
- * and auto-wires the ObjectMapper that Spring MVC uses for real requests.
- * It ensures the Jackson 3 field-visibility fix in JacksonConfig is active.
+ * This test loads the full Spring context (mocking JPA and DataSource to avoid
+ * needing a DB) and auto-wires the ObjectMapper that Spring MVC uses for real
+ * requests. It ensures the Jackson 3 field-visibility fix in JacksonConfig is active.
  */
 @SpringBootTest(properties = {
         "spring.autoconfigure.exclude=" +
@@ -29,6 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
                 "org.springframework.boot.data.jpa.autoconfigure.DataJpaRepositoriesAutoConfiguration"
 })
 class RequestDtoDeserializationTest {
+
+    // Mocking DataSource prevents DataSourceConfig from attempting a real connection.
+    @MockitoBean DataSource dataSource;
+    // Mocking DataLoader prevents it from running ApplicationRunner.run() on startup.
+    @MockitoBean DataLoader dataLoader;
 
     @MockitoBean ConditionRepository conditionRepository;
     @MockitoBean ConditionSymptomRepository conditionSymptomRepository;
