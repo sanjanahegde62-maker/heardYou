@@ -1369,3 +1369,17 @@ body.act::before {
   opacity: 1;
   filter: drop-shadow(0 3px 5px rgba(194, 24, 91, .22));
 }
+/* ===== Ribbon placement: pin to hero card corners ===== */
+.hero { position: relative; }
+
+.ribbon.hero__bow {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+.ribbon.hero__bow--l { top: 24px;    left: 36px;  transform: rotate(-12deg); }
+.ribbon.hero__bow--r { bottom: 24px; right: 36px; transform: rotate(12deg);  }
+
+@media (max-width: 800px) {
+  .ribbon.hero__bow { display: none; }
+}
