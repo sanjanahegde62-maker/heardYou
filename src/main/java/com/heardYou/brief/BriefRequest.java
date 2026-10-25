@@ -11,13 +11,7 @@ public class BriefRequest {
     @NotBlank(message = "lifeStage is required")
     private String lifeStage;
 
-    /**
-     * Optional display name for the document header.
-     * Never stored or logged — used only for PDF generation in this request cycle.
-     */
     private String displayName;
-
-    /** Free-text concerns the person wants to bring to their appointment. */
     private String concerns;
 
     @NotNull(message = "symptoms list is required")
@@ -25,16 +19,8 @@ public class BriefRequest {
     @Valid
     private List<SymptomEntry> symptoms;
 
-    /** Optional: condition slugs the person wants more information about. */
     private List<String> conditionsOfInterest;
-
-    /**
-     * Optional: condition slugs selected from the catalogue for inclusion in the brief.
-     * Supplements the matching algorithm with user-curated conditions.
-     */
     private List<String> selectedSlugs;
-
-    /** Optional: additional notes for the appointment. */
     private String additionalNotes;
 
     public String getLifeStage() { return lifeStage; }
@@ -46,11 +32,11 @@ public class BriefRequest {
     public List<SymptomEntry> getSymptoms() { return symptoms; }
     public void setSymptoms(List<SymptomEntry> symptoms) { this.symptoms = symptoms; }
     public List<String> getConditionsOfInterest() { return conditionsOfInterest; }
-    public void setConditionsOfInterest(List<String> conditionsOfInterest) { this.conditionsOfInterest = conditionsOfInterest; }
+    public void setConditionsOfInterest(List<String> c) { this.conditionsOfInterest = c; }
     public List<String> getSelectedSlugs() { return selectedSlugs; }
-    public void setSelectedSlugs(List<String> selectedSlugs) { this.selectedSlugs = selectedSlugs; }
+    public void setSelectedSlugs(List<String> s) { this.selectedSlugs = s; }
     public String getAdditionalNotes() { return additionalNotes; }
-    public void setAdditionalNotes(String additionalNotes) { this.additionalNotes = additionalNotes; }
+    public void setAdditionalNotes(String s) { this.additionalNotes = s; }
 
     public static class SymptomEntry {
         @NotBlank(message = "symptom slug is required")

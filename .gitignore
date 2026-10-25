@@ -45,3 +45,5 @@ pdf-inspect-output.txt
 .env.*
 !.env.example
 application-local.properties
+
+app.log.err

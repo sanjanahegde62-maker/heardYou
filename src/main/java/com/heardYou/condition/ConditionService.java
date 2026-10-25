@@ -50,7 +50,12 @@ public class ConditionService {
     }
 
     public List<ConditionSummaryDto> search(String query) {
-        return conditionRepository.searchByQuery(query).stream()
+        // Normalise: trim ends and collapse internal whitespace so
+        // "tired  all  the time" matches the alias "tired all the time".
+        // JPQL applies LOWER() for case-insensitivity; this handles spaces.
+        String normalised = query == null ? "" : query.trim().replaceAll("\\s+", " ");
+        if (normalised.isEmpty()) return java.util.List.of();
+        return conditionRepository.searchByQuery(normalised).stream()
                 .map(ConditionSummaryDto::from)
                 .toList();
     }

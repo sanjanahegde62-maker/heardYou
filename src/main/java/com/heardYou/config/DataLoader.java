@@ -57,6 +57,7 @@ public class DataLoader implements ApplicationRunner {
         if (symptomRepo.count() > 0) {
             log.info("DataLoader: core data already present, checking for incremental additions...");
             // Always re-check warning signs so new rules can be added without a full reseed
+            incrementalAliasUpdates();
             seedWarningSigns();
             return;
         }
@@ -68,15 +69,15 @@ public class DataLoader implements ApplicationRunner {
         log.info("DataLoader: seed complete.");
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
     // SOURCES
-    // ──────────────────────────────────────────────────────────────────────────
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
     private Map<String, MedicalSource> sources = new LinkedHashMap<>();
 
     private void seedSources() {
         sources.put("endo-nhs", makeSource(
-                "Endometriosis – NHS",
+                "Endometriosis Ã¢â‚¬â€œ NHS",
                 "NHS (National Health Service, UK)",
                 "https://www.nhs.uk/conditions/endometriosis/",
                 LocalDate.of(2023, 1, 1),
@@ -85,7 +86,7 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("endo-who", makeSource(
-                "Endometriosis – World Health Organization",
+                "Endometriosis Ã¢â‚¬â€œ World Health Organization",
                 "World Health Organization",
                 "https://www.who.int/news-room/fact-sheets/detail/endometriosis",
                 LocalDate.of(2023, 3, 1),
@@ -94,7 +95,7 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("pcos-nhs", makeSource(
-                "Polycystic ovary syndrome (PCOS) – NHS",
+                "Polycystic ovary syndrome (PCOS) Ã¢â‚¬â€œ NHS",
                 "NHS (National Health Service, UK)",
                 "https://www.nhs.uk/conditions/polycystic-ovary-syndrome-pcos/",
                 LocalDate.of(2022, 11, 1),
@@ -103,16 +104,16 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("pcos-who", makeSource(
-                "Polycystic ovary syndrome – World Health Organization",
+                "Polycystic ovary syndrome Ã¢â‚¬â€œ World Health Organization",
                 "World Health Organization",
                 "https://www.who.int/news-room/fact-sheets/detail/polycystic-ovary-syndrome",
                 LocalDate.of(2023, 6, 28),
-                List.of("PCOS affects an estimated 8–13% of women of reproductive age.",
+                List.of("PCOS affects an estimated 8Ã¢â‚¬â€œ13% of women of reproductive age.",
                         "Up to 70% of affected women remain undiagnosed globally."),
                 false));
 
         sources.put("fibro-nhs", makeSource(
-                "Fibromyalgia – NHS",
+                "Fibromyalgia Ã¢â‚¬â€œ NHS",
                 "NHS (National Health Service, UK)",
                 "https://www.nhs.uk/conditions/fibromyalgia/",
                 LocalDate.of(2023, 1, 1),
@@ -121,7 +122,7 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("adenomyosis-nhs", makeSource(
-                "Adenomyosis – NHS",
+                "Adenomyosis Ã¢â‚¬â€œ NHS",
                 "NHS (National Health Service, UK)",
                 "https://www.nhs.uk/conditions/adenomyosis/",
                 LocalDate.of(2022, 8, 1),
@@ -130,7 +131,7 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("pmdd-nice", makeSource(
-                "Premenstrual dysphoric disorder (PMDD) – NICE CKS",
+                "Premenstrual dysphoric disorder (PMDD) Ã¢â‚¬â€œ NICE CKS",
                 "NICE (National Institute for Health and Care Excellence)",
                 "https://cks.nice.org.uk/topics/premenstrual-syndrome/",
                 LocalDate.of(2023, 1, 1),
@@ -138,7 +139,7 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("thyroid-nhs", makeSource(
-                "Underactive thyroid (hypothyroidism) – NHS",
+                "Underactive thyroid (hypothyroidism) Ã¢â‚¬â€œ NHS",
                 "NHS (National Health Service, UK)",
                 "https://www.nhs.uk/conditions/underactive-thyroid-hypothyroidism/",
                 LocalDate.of(2022, 7, 1),
@@ -147,7 +148,7 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("heart-aha", makeSource(
-                "Heart Attack Symptoms in Women – American Heart Association",
+                "Heart Attack Symptoms in Women Ã¢â‚¬â€œ American Heart Association",
                 "American Heart Association",
                 "https://www.heart.org/en/health-topics/heart-attack/warning-signs-of-a-heart-attack/heart-attack-symptoms-in-women",
                 LocalDate.of(2023, 1, 1),
@@ -156,7 +157,7 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("lupus-nhs", makeSource(
-                "Lupus – NHS",
+                "Lupus Ã¢â‚¬â€œ NHS",
                 "NHS (National Health Service, UK)",
                 "https://www.nhs.uk/conditions/lupus/",
                 LocalDate.of(2022, 10, 1),
@@ -165,7 +166,7 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("anxiety-nhs", makeSource(
-                "Generalised anxiety disorder – NHS",
+                "Generalised anxiety disorder Ã¢â‚¬â€œ NHS",
                 "NHS (National Health Service, UK)",
                 "https://www.nhs.uk/mental-health/conditions/generalised-anxiety-disorder/overview/",
                 LocalDate.of(2023, 5, 1),
@@ -174,7 +175,7 @@ public class DataLoader implements ApplicationRunner {
                 false));
 
         sources.put("migraine-nhs", makeSource(
-                "Migraine – NHS",
+                "Migraine Ã¢â‚¬â€œ NHS",
                 "NHS (National Health Service, UK)",
                 "https://www.nhs.uk/conditions/migraine/",
                 LocalDate.of(2022, 12, 1),
@@ -198,9 +199,9 @@ public class DataLoader implements ApplicationRunner {
         return s;
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
     // SYMPTOMS
-    // ──────────────────────────────────────────────────────────────────────────
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
     private Map<String, Symptom> symptoms = new LinkedHashMap<>();
 
@@ -261,7 +262,7 @@ public class DataLoader implements ApplicationRunner {
                 "brain fog", "fibro fog", "difficulty concentrating", "memory problems", "forgetfulness"));
         symptoms.put("bowel-changes", makeSymptom("Bowel changes related to periods", "bowel-changes",
                 "Diarrhoea, constipation, or pain with bowel movements, particularly during menstruation.", "gastrointestinal",
-                "IBS", "diarrhoea", "loose stools", "painful bowel movements", "bowel pain"));
+                "IBS", "diarrhoea", "diarrhea", "loose stools", "painful bowel movements", "bowel pain", "stomach pain", "abdominal pain", "tummy pain", "gut pain"));
         symptoms.put("urinary-symptoms", makeSymptom("Urinary symptoms", "urinary-symptoms",
                 "Increased urgency to urinate, pain on urination, or blood in urine.", "urological",
                 "urinary urgency", "pain urinating", "frequent urination", "blood in urine", "haematuria"));
@@ -300,7 +301,7 @@ public class DataLoader implements ApplicationRunner {
                 "Excessive, ongoing worry or fear that is difficult to control.", "psychological",
                 "worry", "anxious", "panic", "fear", "generalised anxiety", "GAD"));
         symptoms.put("palpitations", makeSymptom("Heart palpitations", "palpitations",
-                "Noticeable heartbeats — fast, fluttering, or pounding sensations in the chest.", "cardiovascular",
+                "Noticeable heartbeats Ã¢â‚¬â€ fast, fluttering, or pounding sensations in the chest.", "cardiovascular",
                 "racing heart", "heart racing", "irregular heartbeat", "fluttering heart", "pounding heart"));
         symptoms.put("light-sensitivity", makeSymptom("Sensitivity to light or sound", "light-sensitivity",
                 "Unusual discomfort caused by bright light, loud noise, or strong smells.", "neurological",
@@ -322,9 +323,9 @@ public class DataLoader implements ApplicationRunner {
         return s;
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
     // CONDITIONS
-    // ──────────────────────────────────────────────────────────────────────────
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
     private void seedConditions() {
         // REPRODUCTIVE body system
@@ -370,7 +371,7 @@ public class DataLoader implements ApplicationRunner {
                 "Symptoms do not always correlate with the extent of endometriosis found at surgery."));
         c.setCommonlyMistakenFor(List.of("Irritable bowel syndrome (IBS)", "Pelvic inflammatory disease (PID)",
                 "Ovarian cysts", "Normal menstrual pain"));
-        c.setAvgDiagnosisDelay("7–10 years on average (WHO, 2023)");
+        c.setAvgDiagnosisDelay("7Ã¢â‚¬â€œ10 years on average (WHO, 2023)");
         c.setSuggestedTests(List.of(
                 "Pelvic ultrasound (transvaginal)",
                 "MRI of the pelvis",
@@ -402,7 +403,7 @@ public class DataLoader implements ApplicationRunner {
         addMapping(c, "heavy-periods", 0.65, "Heavy periods are documented in a significant proportion of people with endometriosis. (NHS)");
         addMapping(c, "fatigue", 0.60, "Fatigue is frequently reported by people with endometriosis, though it is not always included in formal criteria. (WHO)");
         addMapping(c, "bowel-changes", 0.65, "Bowel symptoms during menstruation are well-documented in endometriosis. (NHS)");
-        addMapping(c, "bloating", 0.55, "Bloating is commonly reported by people with endometriosis. (NHS – editorial review pending for precise prevalence figure)", true);
+        addMapping(c, "bloating", 0.55, "Bloating is commonly reported by people with endometriosis. (NHS Ã¢â‚¬â€œ editorial review pending for precise prevalence figure)", true);
         addMapping(c, "lower-back-pain", 0.55, "Lower back pain is documented in endometriosis. (NHS)");
         addMapping(c, "urinary-symptoms", 0.40, "Urinary symptoms can occur with bladder endometriosis. (NHS)");
         addMapping(c, "difficulty-conceiving", 0.50, "Infertility is associated with endometriosis; however, many with endometriosis do conceive. (NHS, WHO)");
@@ -437,7 +438,7 @@ public class DataLoader implements ApplicationRunner {
         c.setSuggestedTests(List.of(
                 "Hormone blood tests (LH, FSH, testosterone, SHBG, prolactin)",
                 "Fasting blood glucose and insulin resistance markers",
-                "AMH (anti-Müllerian hormone)",
+                "AMH (anti-MÃƒÂ¼llerian hormone)",
                 "Pelvic ultrasound"));
         c.setTimeframeAdvice(
                 "If you have had irregular periods, signs of excess androgens (acne, unwanted hair), or " +
@@ -493,7 +494,7 @@ public class DataLoader implements ApplicationRunner {
                 "Symptom severity fluctuates; stress, poor sleep, and activity level can influence symptoms.",
                 "Fibromyalgia can coexist with other conditions such as endometriosis or autoimmune conditions."));
         c.setCommonlyMistakenFor(List.of("Rheumatoid arthritis", "Lupus", "Hypothyroidism", "Chronic fatigue syndrome"));
-        setAvgDiagnosisDelay(c, "Average 2–5 years from symptom onset to diagnosis (editorial review pending)", true);
+        setAvgDiagnosisDelay(c, "Average 2Ã¢â‚¬â€œ5 years from symptom onset to diagnosis (editorial review pending)", true);
         c.setSuggestedTests(List.of(
                 "Blood tests to exclude other causes (ESR, CRP, thyroid function, ANA)",
                 "Clinical assessment using 2016 fibromyalgia diagnostic criteria"));
@@ -523,8 +524,8 @@ public class DataLoader implements ApplicationRunner {
         addMapping(c, "cognitive-fog", 0.75, "Cognitive difficulties ('fibro fog') are a well-documented feature. (NHS)");
         addMapping(c, "mood-changes", 0.55, "Depression and anxiety are commonly associated with fibromyalgia. (NHS)");
         addMapping(c, "lower-back-pain", 0.60, "Lower back pain is frequently reported in fibromyalgia. (NHS)");
-        addMapping(c, "headache", 0.50, "Headaches are reported by some people with fibromyalgia. (NHS — editorial review pending)", true);
-        addMapping(c, "bowel-changes", 0.40, "Bowel symptoms such as irritable bowel are reported in fibromyalgia. (NHS – editorial review pending)", true);
+        addMapping(c, "headache", 0.50, "Headaches are reported by some people with fibromyalgia. (NHS Ã¢â‚¬â€ editorial review pending)", true);
+        addMapping(c, "bowel-changes", 0.40, "Bowel symptoms such as irritable bowel are reported in fibromyalgia. (NHS Ã¢â‚¬â€œ editorial review pending)", true);
     }
 
     private void seedAdenomyosis() {
@@ -572,7 +573,7 @@ public class DataLoader implements ApplicationRunner {
         addMapping(c, "painful-periods", 0.85, "Painful periods are a hallmark of adenomyosis. (NHS)");
         addMapping(c, "pelvic-pain", 0.80, "Pelvic pain and pressure are documented in adenomyosis. (NHS)");
         addMapping(c, "bloating", 0.45, "Bloating and abdominal pressure may be reported. (editorial review pending)", true);
-        addMapping(c, "lower-back-pain", 0.50, "Lower back pain is reported in adenomyosis. (NHS – editorial review pending)", true);
+        addMapping(c, "lower-back-pain", 0.50, "Lower back pain is reported in adenomyosis. (NHS Ã¢â‚¬â€œ editorial review pending)", true);
         addMapping(c, "fatigue", 0.50, "Fatigue related to heavy blood loss is documented. (NHS)");
         addMapping(c, "pain-during-sex", 0.55, "Pain during sex is documented in adenomyosis. (NHS)");
     }
@@ -584,7 +585,7 @@ public class DataLoader implements ApplicationRunner {
         c.setBodySystem("REPRODUCTIVE");
         c.setSummary("PMDD is a severe form of premenstrual syndrome causing significant psychological and physical symptoms in the luteal phase of the menstrual cycle.");
         c.setMedicalDescription(
-                "PMDD involves severe mood and physical symptoms in the luteal phase (typically 1–2 weeks before menstruation) " +
+                "PMDD involves severe mood and physical symptoms in the luteal phase (typically 1Ã¢â‚¬â€œ2 weeks before menstruation) " +
                 "that resolve after the onset of menstruation. It is distinct from PMS by the severity and functional impact.");
         c.setConventionalPresentation(
                 "Marked mood changes including depression, anxiety, irritability, and mood swings; " +
@@ -596,7 +597,7 @@ public class DataLoader implements ApplicationRunner {
                 "Symptom tracking across two or more cycles is key to recognition.");
         c.setDocumentedPresentations(List.of(
                 "PMDD can be confused with depression or anxiety disorders because mood symptoms are prominent.",
-                "The cyclical pattern — symptoms consistently appearing before menstruation and resolving after — is key to diagnosis.",
+                "The cyclical pattern Ã¢â‚¬â€ symptoms consistently appearing before menstruation and resolving after Ã¢â‚¬â€ is key to diagnosis.",
                 "PMDD is recognised in DSM-5 and ICD-11.",
                 "Underlying hormonal sensitivity to normal progesterone fluctuations is a documented mechanism."));
         c.setCommonlyMistakenFor(List.of("Generalised anxiety disorder", "Clinical depression", "Borderline personality disorder", "Normal PMS"));
@@ -606,7 +607,7 @@ public class DataLoader implements ApplicationRunner {
                 "Thyroid function test (to exclude hypothyroidism)",
                 "Hormone blood tests if indicated"));
         c.setTimeframeAdvice(
-                "If you experience severe mood or physical symptoms that reliably appear in the 1–2 weeks before " +
+                "If you experience severe mood or physical symptoms that reliably appear in the 1Ã¢â‚¬â€œ2 weeks before " +
                 "your period and resolve once your period starts, track this across 2 cycles and discuss with your GP.");
         c.setCategory("psychological");
         c.setExtraCategories(Set.of("hormonal", "reproductive"));
@@ -695,7 +696,7 @@ public class DataLoader implements ApplicationRunner {
 
     private void seedHeartDiseaseInWomen() {
         Condition c = new Condition();
-        c.setName("Heart Disease — Atypical Presentation in Women");
+        c.setName("Heart Disease Ã¢â‚¬â€ Atypical Presentation in Women");
         c.setSlug("heart-disease-women");
         c.setBodySystem("CARDIOVASCULAR");
         c.setSummary("Heart disease can present differently in women compared to the classic textbook description, with symptoms often being less dramatic and more easily dismissed.");
@@ -725,7 +726,7 @@ public class DataLoader implements ApplicationRunner {
                 "Coronary angiography if indicated"));
         c.setTimeframeAdvice(
                 "If you experience sudden or unusual chest discomfort, shortness of breath, jaw or back pain, " +
-                "or extreme unexplained fatigue — especially if these are new symptoms — seek medical attention promptly. " +
+                "or extreme unexplained fatigue Ã¢â‚¬â€ especially if these are new symptoms Ã¢â‚¬â€ seek medical attention promptly. " +
                 "If symptoms are severe or sudden, call emergency services immediately.");
         c.setCategory("cardiovascular");
         c.setExtraCategories(Set.of("systemic"));
@@ -734,7 +735,7 @@ public class DataLoader implements ApplicationRunner {
         c.setSpecialistNotes("A cardiologist can assess heart health. An ECG and blood tests are first-line investigations.");
         c.setEducationalGuidance(
                 "Heart disease is the leading cause of death in women globally. Women's symptoms differ from the " +
-                "classic male presentation. If something feels very wrong, seek care — do not wait.");
+                "classic male presentation. If something feels very wrong, seek care Ã¢â‚¬â€ do not wait.");
         c.setClinicianQuestions(List.of(
                 "Could my symptoms be consistent with a heart or cardiovascular problem?",
                 "Would an ECG or blood tests be appropriate?",
@@ -750,7 +751,7 @@ public class DataLoader implements ApplicationRunner {
         addMapping(c, "jaw-neck-pain", 0.70, "Jaw, neck, or back pain is a documented heart attack symptom more common in women. (AHA)");
         addMapping(c, "nausea", 0.65, "Nausea is documented as a symptom of heart attack, more commonly in women. (AHA)");
         addMapping(c, "dizziness", 0.60, "Dizziness or lightheadedness is documented in women with heart attack. (AHA)");
-        addMapping(c, "palpitations", 0.55, "Palpitations can occur with cardiovascular conditions. (AHA — editorial review pending)", true);
+        addMapping(c, "palpitations", 0.55, "Palpitations can occur with cardiovascular conditions. (AHA Ã¢â‚¬â€ editorial review pending)", true);
         addMapping(c, "anxiety", 0.40, "Anxiety and a sense of impending doom are documented with acute cardiac events. (editorial review pending)", true);
     }
 
@@ -787,8 +788,8 @@ public class DataLoader implements ApplicationRunner {
                 "Full blood count, kidney function, urine protein",
                 "Complement levels (C3, C4)"));
         c.setTimeframeAdvice(
-                "If you have persistent joint pain, fatigue, and a skin rash — especially if symptoms come " +
-                "and go — discuss this with your GP. Blood tests can help identify if an autoimmune condition is present.");
+                "If you have persistent joint pain, fatigue, and a skin rash Ã¢â‚¬â€ especially if symptoms come " +
+                "and go Ã¢â‚¬â€ discuss this with your GP. Blood tests can help identify if an autoimmune condition is present.");
         c.setCategory("autoimmune");
         c.setExtraCategories(Set.of("systemic", "pain"));
         c.setLifeStages(Set.of("teen", "reproductive-age", "perimenopause"));
@@ -811,10 +812,10 @@ public class DataLoader implements ApplicationRunner {
         addMapping(c, "joint-pain", 0.85, "Joint pain and swelling are core features of lupus. (NHS)");
         addMapping(c, "rash", 0.75, "Skin rash, including the butterfly rash, is a documented feature of lupus. (NHS)");
         addMapping(c, "widespread-pain", 0.65, "Widespread musculoskeletal pain is documented in lupus. (NHS)");
-        addMapping(c, "mood-changes", 0.50, "Depression and mood changes are documented in people with lupus. (NHS — editorial review pending)", true);
-        addMapping(c, "headache", 0.45, "Headaches are reported by some people with lupus. (NHS — editorial review pending)", true);
+        addMapping(c, "mood-changes", 0.50, "Depression and mood changes are documented in people with lupus. (NHS Ã¢â‚¬â€ editorial review pending)", true);
+        addMapping(c, "headache", 0.45, "Headaches are reported by some people with lupus. (NHS Ã¢â‚¬â€ editorial review pending)", true);
         addMapping(c, "hair-thinning", 0.55, "Hair thinning or loss is a documented feature of lupus. (NHS)");
-        addMapping(c, "cognitive-fog", 0.50, "Cognitive difficulties are documented in lupus. (NHS — editorial review pending)", true);
+        addMapping(c, "cognitive-fog", 0.50, "Cognitive difficulties are documented in lupus. (NHS Ã¢â‚¬â€ editorial review pending)", true);
         addMapping(c, "light-sensitivity", 0.60, "Photosensitivity (sensitivity to light) is a documented feature of lupus. (NHS)");
     }
 
@@ -862,7 +863,7 @@ public class DataLoader implements ApplicationRunner {
                 "Could my symptoms be consistent with an anxiety disorder?",
                 "Would a screening questionnaire such as the GAD-7 be helpful?",
                 "Are there physical causes that should be excluded first?",
-                "What treatment options are available — talking therapy, medication, or both?",
+                "What treatment options are available Ã¢â‚¬â€ talking therapy, medication, or both?",
                 "Is my anxiety possibly linked to my menstrual cycle?"));
         c.setSources(Set.of(sources.get("anxiety-nhs")));
         conditionRepo.save(c);
@@ -872,9 +873,9 @@ public class DataLoader implements ApplicationRunner {
         addMapping(c, "fatigue", 0.75, "Fatigue caused by anxiety is well-documented. (NHS)");
         addMapping(c, "cognitive-fog", 0.65, "Difficulty concentrating is a documented feature of GAD. (NHS)");
         addMapping(c, "mood-changes", 0.65, "Irritability and low mood are documented alongside anxiety. (NHS)");
-        addMapping(c, "headache", 0.55, "Tension headaches are commonly associated with anxiety. (NHS — editorial review pending)", true);
+        addMapping(c, "headache", 0.55, "Tension headaches are commonly associated with anxiety. (NHS Ã¢â‚¬â€ editorial review pending)", true);
         addMapping(c, "palpitations", 0.60, "Heart palpitations are a documented physical symptom of anxiety. (NHS)");
-        addMapping(c, "dizziness", 0.50, "Dizziness can be a physical symptom of anxiety. (NHS — editorial review pending)", true);
+        addMapping(c, "dizziness", 0.50, "Dizziness can be a physical symptom of anxiety. (NHS Ã¢â‚¬â€ editorial review pending)", true);
         addMapping(c, "nausea", 0.50, "Nausea is a documented physical symptom of anxiety. (NHS)");
     }
 
@@ -907,7 +908,7 @@ public class DataLoader implements ApplicationRunner {
                 "Headache and menstrual cycle diary (at least 3 months)",
                 "Neurological assessment if headache features are atypical"));
         c.setTimeframeAdvice(
-                "If you regularly have severe headaches that coincide with your period, track this over 2–3 " +
+                "If you regularly have severe headaches that coincide with your period, track this over 2Ã¢â‚¬â€œ3 " +
                 "cycles and discuss with your GP. Effective treatments exist, including hormonal approaches.");
         c.setCategory("neurological");
         c.setExtraCategories(Set.of("hormonal", "pain"));
@@ -931,14 +932,14 @@ public class DataLoader implements ApplicationRunner {
         addMapping(c, "light-sensitivity", 0.80, "Sensitivity to light and sound is a core feature of migraine. (NHS)");
         addMapping(c, "fatigue", 0.65, "Fatigue before, during, and after migraine is well-documented. (NHS)");
         addMapping(c, "cognitive-fog", 0.60, "Cognitive difficulties ('brain fog') are documented in the migraine prodrome and postdrome. (NHS)");
-        addMapping(c, "dizziness", 0.55, "Dizziness can accompany migraine attacks. (NHS — editorial review pending)", true);
-        addMapping(c, "mood-changes", 0.50, "Mood changes are documented in the migraine prodrome phase. (NHS — editorial review pending)", true);
+        addMapping(c, "dizziness", 0.55, "Dizziness can accompany migraine attacks. (NHS Ã¢â‚¬â€ editorial review pending)", true);
+        addMapping(c, "mood-changes", 0.50, "Mood changes are documented in the migraine prodrome phase. (NHS Ã¢â‚¬â€ editorial review pending)", true);
         addMapping(c, "painful-periods", 0.45, "Painful periods co-occurring with headaches can suggest menstrual migraine. (NHS)");
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // HELPERS – condition-symptom mapping
-    // ──────────────────────────────────────────────────────────────────────────
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
+    // HELPERS Ã¢â‚¬â€œ condition-symptom mapping
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
     /** Adds a mapping with no editorial review flag (i.e. evidence is considered adequate). */
     private void addMapping(Condition condition, String symptomSlug,
@@ -969,11 +970,11 @@ public class DataLoader implements ApplicationRunner {
         c.setAvgDiagnosisDelay(pendingReview ? "[NEEDS EDITORIAL REVIEW] " + delay : delay);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
     // WARNING SIGNS
     // Sourced only from authoritative bodies. Do not add invented statistics
     // or unsourced clinical guidance.
-    // ──────────────────────────────────────────────────────────────────────────
+    // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 
     private void seedWarningSigns() {
         // Heavy bleeding
@@ -984,7 +985,7 @@ public class DataLoader implements ApplicationRunner {
                 List.of("heavy-periods"),
                 List.of("adenomyosis", "endometriosis"),
                 "https://www.nhs.uk/conditions/heavy-periods/",
-                "Heavy periods – NHS",
+                "Heavy periods Ã¢â‚¬â€œ NHS",
                 1, null);
 
         // Severe sudden pelvic pain
@@ -995,7 +996,7 @@ public class DataLoader implements ApplicationRunner {
                 List.of("pelvic-pain"),
                 List.of("endometriosis", "adenomyosis"),
                 "https://www.nhs.uk/conditions/stomach-ache/",
-                "Stomach ache and abdominal pain – NHS",
+                "Stomach ache and abdominal pain Ã¢â‚¬â€œ NHS",
                 1, null);
 
         // Urinary blood
@@ -1006,22 +1007,22 @@ public class DataLoader implements ApplicationRunner {
                 List.of("urinary-symptoms"),
                 List.of(),
                 "https://www.nhs.uk/conditions/blood-in-urine/",
-                "Blood in urine (haematuria) – NHS",
+                "Blood in urine (haematuria) Ã¢â‚¬â€œ NHS",
                 1, null);
 
-        // Heart attack warning — requires 3+ cardiac symptoms together
+        // Heart attack warning Ã¢â‚¬â€ requires 3+ cardiac symptoms together
         saveWarningSignIfAbsent("Possible cardiac emergency signs",
                 "A combination of chest discomfort, shortness of breath, jaw or back pain, nausea, " +
-                "or extreme fatigue — especially if sudden or new — can indicate a cardiac emergency. " +
+                "or extreme fatigue Ã¢â‚¬â€ especially if sudden or new Ã¢â‚¬â€ can indicate a cardiac emergency. " +
                 "Women's heart attack symptoms are often different from the classic description and can be subtle.",
                 "Call emergency services (999/112) immediately if you have a combination of these symptoms and they are new or sudden.",
                 List.of("chest-discomfort", "shortness-of-breath", "jaw-neck-pain", "nausea", "dizziness", "palpitations"),
                 List.of("heart-disease-women"),
                 "https://www.heart.org/en/health-topics/heart-attack/warning-signs-of-a-heart-attack/heart-attack-symptoms-in-women",
-                "Heart Attack Symptoms in Women – American Heart Association",
+                "Heart Attack Symptoms in Women Ã¢â‚¬â€œ American Heart Association",
                 3, null);
 
-        // Lupus red flag — new or worsening kidney symptoms
+        // Lupus red flag Ã¢â‚¬â€ new or worsening kidney symptoms
         saveWarningSignIfAbsent("Possible kidney involvement in autoimmune condition",
                 "Foamy urine, swelling in the legs, ankles, or feet, and elevated blood pressure alongside " +
                 "autoimmune symptoms may suggest kidney involvement, which requires prompt medical assessment.",
@@ -1029,19 +1030,19 @@ public class DataLoader implements ApplicationRunner {
                 List.of("urinary-symptoms", "rash", "joint-pain"),
                 List.of("lupus"),
                 "https://www.nhs.uk/conditions/lupus/",
-                "Lupus – NHS",
+                "Lupus Ã¢â‚¬â€œ NHS",
                 2, null);
 
-        // Stroke warning signs — FAST (Face, Arms, Speech, Time)
+        // Stroke warning signs Ã¢â‚¬â€ FAST (Face, Arms, Speech, Time)
         saveWarningSignIfAbsent("Possible stroke warning signs (FAST)",
                 "Sudden face drooping on one side, arm weakness or numbness, slurred or strange speech, " +
                 "or a sudden severe headache with no known cause can be signs of a stroke or TIA. " +
                 "Use the FAST test: Face, Arms, Speech, Time to call 999.",
-                "Call emergency services (999/112) immediately. Time is critical — do not wait to see if symptoms improve.",
+                "Call emergency services (999/112) immediately. Time is critical Ã¢â‚¬â€ do not wait to see if symptoms improve.",
                 List.of("dizziness", "headache", "cognitive-fog"),
                 List.of(),
                 "https://www.nhs.uk/conditions/stroke/symptoms/",
-                "Stroke symptoms – NHS",
+                "Stroke symptoms Ã¢â‚¬â€œ NHS",
                 2, null);
 
         // Postpartum warning signs
@@ -1053,14 +1054,119 @@ public class DataLoader implements ApplicationRunner {
                 List.of("heavy-periods", "headache", "shortness-of-breath", "chest-discomfort"),
                 List.of(),
                 "https://www.nhs.uk/pregnancy/labour-and-birth/after-the-birth/postpartum-complications/",
-                "Postpartum complications – NHS",
+                "Postpartum complications Ã¢â‚¬â€œ NHS",
                 2, null);
     }
 
     /**
      * Saves a warning sign only if one with the same name does not already exist.
-     * Safe to call on every startup — idempotent.
+     * Safe to call on every startup Ã¢â‚¬â€ idempotent.
      */
+    // -------------------------------------------------------------------------
+    // INCREMENTAL ALIAS UPDATES
+    // Called on every startup to add new aliases to existing symptom records.
+    // Uses addAliasIfAbsent() which is idempotent: it skips aliases that are
+    // already present, so repeated runs are safe on a live database.
+    // -------------------------------------------------------------------------
+
+    private void incrementalAliasUpdates() {
+        // Periods
+        addAliasIfAbsent("painful-periods", "bad cramps");
+        addAliasIfAbsent("painful-periods", "bad period pain");
+        addAliasIfAbsent("painful-periods", "severe cramps");
+        addAliasIfAbsent("painful-periods", "terrible cramps");
+
+        addAliasIfAbsent("irregular-periods", "late period");
+        addAliasIfAbsent("irregular-periods", "late periods");
+        addAliasIfAbsent("irregular-periods", "spotting");
+        addAliasIfAbsent("irregular-periods", "light bleeding");
+        addAliasIfAbsent("irregular-periods", "irregular bleeding");
+
+        addAliasIfAbsent("heavy-periods", "very heavy periods");
+        addAliasIfAbsent("heavy-periods", "soaking through pads");
+
+        // Pelvic and abdominal
+        addAliasIfAbsent("pelvic-pain", "lower belly pain");
+        addAliasIfAbsent("pelvic-pain", "belly pain");
+        addAliasIfAbsent("pelvic-pain", "tummy ache");
+        addAliasIfAbsent("pelvic-pain", "lower tummy pain");
+
+        // Fatigue and general
+        addAliasIfAbsent("fatigue", "tired all the time");
+        addAliasIfAbsent("fatigue", "always exhausted");
+        addAliasIfAbsent("fatigue", "weakness");
+        addAliasIfAbsent("fatigue", "feeling weak");
+        addAliasIfAbsent("fatigue", "no energy at all");
+
+        // Neurological
+        addAliasIfAbsent("dizziness", "feeling dizzy");
+        addAliasIfAbsent("dizziness", "dizzy spells");
+        addAliasIfAbsent("dizziness", "dizzy");
+
+        addAliasIfAbsent("cognitive-fog", "trouble concentrating");
+        addAliasIfAbsent("cognitive-fog", "can't concentrate");
+        addAliasIfAbsent("cognitive-fog", "mind fog");
+        addAliasIfAbsent("cognitive-fog", "foggy head");
+
+        addAliasIfAbsent("headache", "headaches");
+        addAliasIfAbsent("headache", "bad headache");
+
+        // Mood and mental health
+        addAliasIfAbsent("mood-changes", "feeling low");
+        addAliasIfAbsent("mood-changes", "sad");
+        addAliasIfAbsent("mood-changes", "emotional");
+        addAliasIfAbsent("mood-changes", "crying a lot");
+        addAliasIfAbsent("mood-changes", "mood changes");
+
+        addAliasIfAbsent("sleep-disturbance", "trouble sleeping");
+        addAliasIfAbsent("sleep-disturbance", "difficulty sleeping");
+        addAliasIfAbsent("sleep-disturbance", "sleepless");
+        addAliasIfAbsent("sleep-disturbance", "waking up tired");
+
+        addAliasIfAbsent("anxiety", "feeling anxious");
+        addAliasIfAbsent("anxiety", "constant worry");
+        addAliasIfAbsent("anxiety", "on edge");
+
+        // Urinary
+        addAliasIfAbsent("urinary-symptoms", "burning while peeing");
+        addAliasIfAbsent("urinary-symptoms", "burning urination");
+        addAliasIfAbsent("urinary-symptoms", "painful peeing");
+        addAliasIfAbsent("urinary-symptoms", "peeing a lot");
+        addAliasIfAbsent("urinary-symptoms", "needing to pee urgently");
+        addAliasIfAbsent("urinary-symptoms", "urinary burning");
+
+        // Digestive
+        addAliasIfAbsent("nausea", "vomiting");
+        addAliasIfAbsent("nausea", "feeling nauseous");
+        addAliasIfAbsent("nausea", "throwing up");
+        addAliasIfAbsent("nausea", "being sick");
+
+        addAliasIfAbsent("constipation", "can't go to the toilet");
+        addAliasIfAbsent("constipation", "not going to the toilet");
+        addAliasIfAbsent("constipation", "straining");
+    }
+
+    /**
+     * Adds {@code alias} to the symptom identified by {@code slug} if it is not
+     * already present. Safe to run on an existing database; skipped if the
+     * symptom does not exist or already has the alias.
+     */
+    private void addAliasIfAbsent(String slug, String alias) {
+        symptomRepo.findBySlug(slug).ifPresent(s -> {
+            if (s.getAliases() == null) {
+                s.setAliases(new ArrayList<>());
+            }
+            String lc = alias.toLowerCase(java.util.Locale.ROOT);
+            boolean already = s.getAliases().stream()
+                    .anyMatch(a -> a.toLowerCase(java.util.Locale.ROOT).equals(lc));
+            if (!already) {
+                s.getAliases().add(alias);
+                symptomRepo.save(s);
+                log.debug("DataLoader: added alias '{}' to symptom '{}'", alias, slug);
+            }
+        });
+    }
+
     private void saveWarningSignIfAbsent(String name, String message, String action,
                                           List<String> triggerSlugs, List<String> conditionSlugs,
                                           String sourceUrl, String sourceTitle,
