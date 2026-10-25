@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Textbook vs. Her</title>
+  <title>HeardYou</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
@@ -19,10 +19,24 @@
       <path d="M34 24 L42 38 L36 36 L32 26Z" />
       <circle cx="32" cy="20" r="4.5" />
     </symbol>
+    <symbol id="ribbon" viewBox="0 0 64 84">
+      <g fill="none" stroke-linejoin="round">
+        <!-- first strand: left tail → up and around the loop -->
+        <path d="M14 78 C24 62 34 50 40 36 C46 22 44 8 32 8"
+              stroke="currentColor" stroke-width="12"/>
+        <path d="M14 78 C24 62 34 50 40 36 C46 22 44 8 32 8"
+              stroke="var(--ribbon-fill, #ffd6e4)" stroke-width="6.5"/>
+        <!-- second strand: loop → down across the first → right tail (drawn on top) -->
+        <path d="M32 8 C20 8 18 22 24 36 C30 50 40 62 50 78"
+              stroke="currentColor" stroke-width="12"/>
+        <path d="M32 8 C20 8 18 22 24 36 C30 50 40 62 50 78"
+              stroke="var(--ribbon-fill, #ffd6e4)" stroke-width="6.5"/>
+      </g>
+    </symbol>
   </svg>
 
   <header class="site-header site-header--bar">
-    <h1><a href="index.html">Textbook vs. Her</a></h1>
+    <h1><a href="index.html">heardYou</a></h1>
     <nav class="site-nav" aria-label="Main">
       <a href="#how">How it works</a>
       <a href="#news-title">News</a>
@@ -34,10 +48,10 @@
   <main>
     <!-- HERO -->
     <section class="hero" aria-labelledby="hero-title">
-      <svg class="bow hero__bow hero__bow--l" viewBox="0 0 64 40" aria-hidden="true" focusable="false"><use href="#bow"></use></svg>
-      <svg class="bow hero__bow hero__bow--r" viewBox="0 0 64 40" aria-hidden="true" focusable="false"><use href="#bow"></use></svg>
+      <svg class="ribbon hero__bow hero__bow--l" viewBox="0 0 100 130" aria-hidden="true" focusable="false"><use href="#ribbon"></use></svg>
+      <svg class="ribbon hero__bow hero__bow--r" viewBox="0 0 100 130" aria-hidden="true" focusable="false"><use href="#ribbon"></use></svg>
       <p class="hero__eyebrow">Women's health, whole body</p>
-      <h2 id="hero-title" class="hero__title">Textbook <span>vs.</span> Her</h2>
+      <h2 id="hero-title" class="hero__title">heard<span>You</span></h2>
       <p class="hero__lead">
         Conditions are often described one way in textbooks, and can show up differently in women.
         Learn what's documented, explore how your symptoms overlap, and walk into your appointment prepared.

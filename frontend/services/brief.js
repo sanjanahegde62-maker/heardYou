@@ -1,7 +1,7 @@
 import { CONFIG } from "../config.js";
 import { ApiError, postJson } from "./api.js";
 
-const FILENAME = "textbook-vs-her-health-brief.pdf";
+const FILENAME = "heardyou-health-brief.pdf";
 
 export async function downloadBrief({ lifeStage, symptoms, selectedSlugs, displayName }) {
   // The PDF is made by the backend. We never fake a medical document in the browser.

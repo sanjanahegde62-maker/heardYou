@@ -40,7 +40,7 @@ function warningItem(w) {
 }
 
 function render(c) {
-  document.title = `${c.name || "Condition"} · Textbook vs. Her`;
+  document.title = `${c.name || "Condition"} · HeardYou`;
 
   const overview = asList(c.overview);
   const textbook = asList(c.textbookPresentation);

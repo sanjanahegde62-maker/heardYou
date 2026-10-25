@@ -1,5 +1,5 @@
 /* =========================================================
-   Textbook vs. Her: main stylesheet
+   HeardYou: main stylesheet
    Edit colours here. Red is reserved for warning signs only.
    ========================================================= */
 :root {
@@ -1191,4 +1191,181 @@ html { scroll-behavior: smooth; }
   mix-blend-mode: multiply;
   opacity: 0.2;
   pointer-events: none;
+}
+/* ---------- Pink header, call-to-action and footer, blended into the page ---------- */
+:root { --ink-dark: #5a1238; }
+
+/* header: solid pink on top, fading into the page below */
+.site-header {
+  padding-bottom: 2.8rem;
+  color: var(--ink-dark);
+  background: linear-gradient(
+    180deg,
+    #fc7aa0 0%,
+    #fd82a6 55%,
+    rgba(255, 138, 172, 0) 100%
+  );
+}
+.site-header h1 a,
+.site-nav a { color: var(--ink-dark); }
+.site-nav .site-nav__cta { color: #fff !important; background: var(--ink-dark); }
+.steps li { color: var(--ink-dark); background: rgba(255, 255, 255, 0.45); }
+.steps li[aria-current="step"] { color: #fff; background: var(--ink-dark); }
+
+/* call-to-action: a soft glow that fades out at every edge, no box */
+.cta {
+  margin: 3rem 0 0;
+  padding: 3.5rem 1.5rem;
+  color: var(--ink-dark);
+  background: radial-gradient(
+    ellipse closest-side at 50% 50%,
+    rgba(252, 122, 160, 0.95) 0%,
+    rgba(252, 122, 160, 0.6) 55%,
+    rgba(252, 122, 160, 0) 100%
+  );
+  border-radius: 0;
+}
+.cta .btn--light { color: #fff; background: var(--ink-dark); border-color: var(--ink-dark); }
+.cta .btn--light:hover { color: #fff; background: var(--rose-900); border-color: var(--rose-900); }
+.cta .btn--outline-light { color: var(--ink-dark); background: rgba(255, 255, 255, 0.45); border-color: var(--ink-dark); }
+.cta .btn--outline-light:hover { color: #fff; background: var(--ink-dark); }
+
+/* footer: fades from the page colour down into pink */
+.site-footer {
+  padding: 2.8rem 1.5rem 1.4rem;
+  color: var(--ink-dark);
+  background: linear-gradient(180deg, rgba(252, 122, 160, 0) 0%, rgba(252, 122, 160, 0.55) 100%);
+  border-top: 0;
+}
+
+/* ---------- Awareness ribbons in the hero ---------- */
+.ribbon.hero__bow {
+  width: 64px;
+  height: 84px;
+  opacity: 0.95;
+  filter: drop-shadow(0 4px 6px rgba(110, 23, 72, 0.25));
+}
+.ribbon.hero__bow--l { top: 1.2rem; left: 1.6rem; transform: rotate(-16deg); }
+.ribbon.hero__bow--r { right: 1.6rem; bottom: 1.2rem; transform: rotate(16deg) scaleX(-1); }
+
+@media (max-width: 800px) { .ribbon.hero__bow { display: none; } }
+/* ---------- Header: long, smooth fade into the page ---------- */
+.site-header {
+  position: relative;
+  padding-bottom: var(--gap);          /* undo the extra padding from before */
+  background: linear-gradient(90deg, #fc7aa0, #ff8aac);   /* solid bar */
+}
+
+/* the fade: same pink, masked with a smooth S-curve, sitting just under the bar */
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 150px;                        /* longer = softer; try 110px to 220px */
+  z-index: -1;                          /* behind all page content */
+  pointer-events: none;
+  background: linear-gradient(90deg, #fc7aa0, #ff8aac);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.972) 10%,
+    rgba(0, 0, 0, 0.896) 20%,
+    rgba(0, 0, 0, 0.784) 30%,
+    rgba(0, 0, 0, 0.648) 40%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.352) 60%,
+    rgba(0, 0, 0, 0.216) 70%,
+    rgba(0, 0, 0, 0.104) 80%,
+    rgba(0, 0, 0, 0.028) 90%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    rgba(0, 0, 0, 0.972) 10%,
+    rgba(0, 0, 0, 0.896) 20%,
+    rgba(0, 0, 0, 0.784) 30%,
+    rgba(0, 0, 0, 0.648) 40%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.352) 60%,
+    rgba(0, 0, 0, 0.216) 70%,
+    rgba(0, 0, 0, 0.104) 80%,
+    rgba(0, 0, 0, 0.028) 90%,
+    transparent 100%
+  );
+}
+
+/* ---------- Clickable KNOW / MATCH / ACT steps ---------- */
+.steps li { padding: 0; }
+.steps a {
+  display: block;
+  padding: 0.35rem 1rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 999px;
+}
+.steps li:not([aria-current="step"]):hover { background: rgba(255, 255, 255, 0.8); }
+.steps a:focus-visible { outline: 3px solid var(--rose-900); outline-offset: 2px; }
+
+/* ===== KNOW page: hands + symbol background, fades out downward ===== */
+body.know {
+  position: relative;
+  background: #fff6f9;               /* soft pink the photo fades into */
+}
+
+body.know::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 760px;                      /* how far down the photo reaches */
+  z-index: -1;                        /* behind all page content */
+  pointer-events: none;
+  background: #fbd1dc url("../assets/know-bg.jpg") center 60% / cover no-repeat;
+
+  /* eased S-curve fade, same idea as the header */
+  -webkit-mask-image: linear-gradient(to bottom,
+    #000 0%, rgba(0,0,0,.98) 15%, rgba(0,0,0,.9) 30%,
+    rgba(0,0,0,.7) 45%, rgba(0,0,0,.42) 60%,
+    rgba(0,0,0,.18) 75%, rgba(0,0,0,.05) 88%, transparent 100%);
+          mask-image: linear-gradient(to bottom,
+    #000 0%, rgba(0,0,0,.98) 15%, rgba(0,0,0,.9) 30%,
+    rgba(0,0,0,.7) 45%, rgba(0,0,0,.42) 60%,
+    rgba(0,0,0,.18) 75%, rgba(0,0,0,.05) 88%, transparent 100%);
+}
+
+/* ===== ACT page: sunburst background, fades out downward ===== */
+body.act {
+  position: relative;
+  background: #fff6f9;               /* soft pink the photo fades into */
+}
+
+body.act::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 760px;                      /* how far down the sunburst reaches */
+  z-index: -1;                        /* behind all page content */
+  pointer-events: none;
+  background: #f9b8c8 url("../assets/act-bg.jpg") center 50% / cover no-repeat;
+
+  -webkit-mask-image: linear-gradient(to bottom,
+    #000 0%, rgba(0,0,0,.98) 15%, rgba(0,0,0,.9) 30%,
+    rgba(0,0,0,.7) 45%, rgba(0,0,0,.42) 60%,
+    rgba(0,0,0,.18) 75%, rgba(0,0,0,.05) 88%, transparent 100%);
+          mask-image: linear-gradient(to bottom,
+    #000 0%, rgba(0,0,0,.98) 15%, rgba(0,0,0,.9) 30%,
+    rgba(0,0,0,.7) 45%, rgba(0,0,0,.42) 60%,
+    rgba(0,0,0,.18) 75%, rgba(0,0,0,.05) 88%, transparent 100%);
+}
+
+/* ===== Ribbon: crisp outlined style (old bow colour) ===== */
+.ribbon.hero__bow {
+  width: 68px;
+  height: 90px;
+  color: #c2185b;                    /* outline: same magenta as the old bow */
+  --ribbon-fill: #ffd6e4;            /* soft pink inside the band */
+  opacity: 1;
+  filter: drop-shadow(0 3px 5px rgba(194, 24, 91, .22));
 }
