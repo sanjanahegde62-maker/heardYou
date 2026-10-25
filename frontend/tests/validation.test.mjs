@@ -370,3 +370,128 @@ test("condition.js does not render warningSigns from ConditionDetailDto (field a
   const warnings = [];  // condition.js hard-codes this to []
   assert.deepEqual(warnings, []);
 });
+
+
+// ---------------------------------------------------------------------------
+// atlas.js: search + filter logic tests
+// ---------------------------------------------------------------------------
+
+// Inline the helpers we need from atlas.js (no DOM dependency)
+
+function applyFiltersToItems(items, filters) {
+  let result = items;
+  if (filters.system) {
+    const sys = filters.system.toUpperCase();
+    result = result.filter((c) => (c.bodySystem || c.system || "").toUpperCase() === sys);
+  }
+  if (filters.stage) {
+    result = result.filter(
+      (c) => Array.isArray(c.lifeStages) && c.lifeStages.includes(filters.stage)
+    );
+  }
+  return result;
+}
+
+// Sample items matching real ConditionSummaryDto shape
+const sampleItems = [
+  { slug: "endometriosis",   name: "Endometriosis",  bodySystem: "REPRODUCTIVE", summary: "Pelvic pain", lifeStages: ["teen", "reproductive-age"] },
+  { slug: "pcos",            name: "PCOS",            bodySystem: "REPRODUCTIVE", summary: "Irregular periods", lifeStages: ["teen", "reproductive-age", "adult"] },
+  { slug: "hypothyroidism",  name: "Hypothyroidism",  bodySystem: "HORMONAL_METABOLIC", summary: "Fatigue and weight gain", lifeStages: ["adult", "perimenopause"] },
+  { slug: "gad",             name: "GAD",             bodySystem: "BRAIN_MIND",  summary: "Anxiety and headache",   lifeStages: ["teen", "adult"] },
+  { slug: "fibromyalgia",    name: "Fibromyalgia",    bodySystem: "BONE_PAIN",   summary: "Widespread pain",        lifeStages: ["adult", "perimenopause"] },
+];
+
+test("applyFiltersToItems: no filter returns all items", () => {
+  const result = applyFiltersToItems(sampleItems, { system: "", stage: "" });
+  assert.equal(result.length, 5);
+});
+
+test("applyFiltersToItems: system filter is case-insensitive (REPRODUCTIVE)", () => {
+  const result = applyFiltersToItems(sampleItems, { system: "REPRODUCTIVE", stage: "" });
+  assert.equal(result.length, 2);
+  assert.ok(result.every((c) => c.bodySystem === "REPRODUCTIVE"));
+});
+
+test("applyFiltersToItems: system filter is case-insensitive (lowercase reproductive)", () => {
+  const result = applyFiltersToItems(sampleItems, { system: "reproductive", stage: "" });
+  assert.equal(result.length, 2);
+});
+
+test("applyFiltersToItems: stage filter matches lifeStages array", () => {
+  const result = applyFiltersToItems(sampleItems, { system: "", stage: "teen" });
+  assert.equal(result.length, 3);
+  assert.ok(result.every((c) => c.lifeStages.includes("teen")));
+});
+
+test("applyFiltersToItems: system + stage combined filter", () => {
+  const result = applyFiltersToItems(sampleItems, { system: "REPRODUCTIVE", stage: "teen" });
+  assert.equal(result.length, 2);
+  assert.ok(result.every((c) => c.bodySystem === "REPRODUCTIVE" && c.lifeStages.includes("teen")));
+});
+
+test("applyFiltersToItems: filter with no matches returns empty array", () => {
+  const result = applyFiltersToItems(sampleItems, { system: "CARDIOVASCULAR", stage: "" });
+  assert.equal(result.length, 0);
+});
+
+test("applyFiltersToItems: stage filter with no matches returns empty array", () => {
+  const result = applyFiltersToItems(sampleItems, { system: "", stage: "postmenopause" });
+  assert.equal(result.length, 0);
+});
+
+test("applyFiltersToItems: handles missing lifeStages gracefully", () => {
+  const items = [{ slug: "x", name: "X", bodySystem: "REPRODUCTIVE", lifeStages: undefined }];
+  const result = applyFiltersToItems(items, { system: "", stage: "teen" });
+  assert.equal(result.length, 0);
+});
+
+// Search envelope unwrap (searchContent logic in conditions.js)
+function unwrapSearch(data) {
+  if (data && Array.isArray(data.conditions)) return data.conditions;
+  if (Array.isArray(data)) return data;
+  return [];
+}
+
+test("searchContent: unwraps conditions array from /api/search envelope", () => {
+  const apiResponse = { conditions: sampleItems.slice(0, 2), symptoms: [], query: "endo" };
+  const result = unwrapSearch(apiResponse);
+  assert.equal(result.length, 2);
+  assert.equal(result[0].slug, "endometriosis");
+});
+
+test("searchContent: passes through plain array (legacy/mock fallback)", () => {
+  const result = unwrapSearch(sampleItems);
+  assert.equal(result.length, 5);
+});
+
+test("searchContent: returns empty array for unexpected shape", () => {
+  assert.deepEqual(unwrapSearch(null), []);
+  assert.deepEqual(unwrapSearch(undefined), []);
+  assert.deepEqual(unwrapSearch({}), []);
+});
+
+test("searchContent: returns empty array when conditions key is empty", () => {
+  const apiResponse = { conditions: [], symptoms: [], query: "xyz" };
+  assert.deepEqual(unwrapSearch(apiResponse), []);
+});
+
+// Minimum query length guard (mirrors atlas.js runSearch logic)
+function shouldSearch(q) {
+  return typeof q === "string" && q.trim().length >= 2;
+}
+
+test("runSearch: accepts queries of 2 or more characters", () => {
+  assert.ok(shouldSearch("fa"));
+  assert.ok(shouldSearch("fatigue"));
+  assert.ok(shouldSearch("painful periods"));
+});
+
+test("runSearch: rejects empty string", () => {
+  assert.ok(!shouldSearch(""));
+  assert.ok(!shouldSearch("  "));
+});
+
+test("runSearch: rejects single character", () => {
+  assert.ok(!shouldSearch("f"));
+  assert.ok(!shouldSearch("F"));
+});

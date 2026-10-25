@@ -93,24 +93,100 @@ async function load(task, isSearch) {
 
 const loadGrid = () => load(() => listConditions(filters), false);
 
+/**
+ * Run a keyword search, then client-side filter results by the active body-system
+ * and life-stage filters (the /api/search endpoint does not accept those params).
+ */
+function applyFiltersToItems(items) {
+  let result = items;
+  if (filters.system) {
+    const sys = filters.system.toUpperCase();
+    result = result.filter((c) => (c.bodySystem || c.system || "").toUpperCase() === sys);
+  }
+  if (filters.stage) {
+    // ConditionSummaryDto sends lifeStages as a Set<String> of backend slugs.
+    result = result.filter(
+      (c) => Array.isArray(c.lifeStages) && c.lifeStages.includes(filters.stage)
+    );
+  }
+  return result;
+}
+
+function runSearch(q) {
+  const trimmed = q.trim();
+  if (!trimmed) { loadGrid(); return; }
+  if (trimmed.length < 2) {
+    setStatus("Type at least 2 characters to search.");
+    $("atlas-grid").innerHTML = "";
+    showError(null);
+    return;
+  }
+  load(async () => {
+    const items = await searchContent(trimmed);
+    return applyFiltersToItems(items);
+  }, true);
+}
+
+// ── Event listeners ───────────────────────────────────────────────────────────
+
 $("filter-system").addEventListener("change", (e) => {
   filters.system = e.target.value;
-  $("atlas-search").value = "";
-  loadGrid();
+  const q = $("atlas-search").value.trim();
+  // If there is an active search query, re-run search with new filter applied.
+  // Otherwise reload the full grid with the filter.
+  if (q.length >= 2) {
+    clearTimeout(searchTimer);
+    runSearch(q);
+  } else {
+    $("atlas-search").value = "";
+    loadGrid();
+  }
 });
+
 $("filter-stage").addEventListener("change", (e) => {
   // The select value is the frontend enum (e.g. ADULT_20_39).
   // Translate it to the backend slug (e.g. "adult") before sending.
   const frontendVal = e.target.value;
   filters.stage = frontendVal ? (LIFE_STAGE_BACKEND_MAP[frontendVal] || frontendVal) : "";
-  $("atlas-search").value = "";
-  loadGrid();
+  const q = $("atlas-search").value.trim();
+  // If there is an active search query, re-run search with new filter applied.
+  if (q.length >= 2) {
+    clearTimeout(searchTimer);
+    runSearch(q);
+  } else {
+    $("atlas-search").value = "";
+    loadGrid();
+  }
 });
+
+// "input" fires on every keystroke and on programmatic clears.
 $("atlas-search").addEventListener("input", (e) => {
   clearTimeout(searchTimer);
   const q = e.target.value.trim();
   if (!q) { loadGrid(); return; }
-  searchTimer = setTimeout(() => load(() => searchContent(q), true), 300);
+  if (q.length < 2) {
+    setStatus("Type at least 2 characters to search.");
+    $("atlas-grid").innerHTML = "";
+    showError(null);
+    return;
+  }
+  searchTimer = setTimeout(() => runSearch(q), 300);
+});
+
+// "search" fires when the user presses Enter or clicks the browser's built-in
+// clear (x) button on <input type="search">.  Without this handler, Enter does
+// nothing because there is no surrounding <form>.
+$("atlas-search").addEventListener("search", (e) => {
+  clearTimeout(searchTimer);
+  runSearch(e.target.value);
+});
+
+// Also catch Enter on keydown for browsers that don't fire "search" on Enter.
+$("atlas-search").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    clearTimeout(searchTimer);
+    runSearch(e.target.value);
+  }
 });
 
 // first paint — populate the stage filter dropdown with frontend display values
