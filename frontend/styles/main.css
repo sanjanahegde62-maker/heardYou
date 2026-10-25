@@ -1383,3 +1383,18 @@ body.act::before {
 @media (max-width: 800px) {
   .ribbon.hero__bow { display: none; }
 }
+/* ===== CTA: no box, just a soft round glow ===== */
+.cta {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  outline: 0;
+  background: radial-gradient(
+    ellipse closest-side at 50% 50%,
+    rgba(252, 122, 160, .85) 0%,
+    rgba(252, 122, 160, .6)  30%,
+    rgba(252, 122, 160, .28) 60%,
+    rgba(252, 122, 160, .08) 85%,
+    rgba(252, 122, 160, 0)   100%
+  );
+}
