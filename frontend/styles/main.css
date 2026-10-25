@@ -58,9 +58,9 @@ a { color: var(--purple-700); }
   color: var(--rose-900);
   background: linear-gradient(
     120deg,
-    #fcbcdb,
-    #fd96a5 55%,
-    #f9c6d2
+    #f5adc6,
+    #f8d9d3 55%,
+    #f6cbdb
   );
   border-bottom: 1px solid rgba(110, 23, 72, 0.08);
 }
