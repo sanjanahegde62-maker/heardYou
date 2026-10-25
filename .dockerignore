@@ -1,0 +1,5 @@
+.git
+.idea
+target
+app.log
+app.log.err
