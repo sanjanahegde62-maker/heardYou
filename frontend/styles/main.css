@@ -52,13 +52,19 @@ a { color: var(--purple-700); }
   outline-offset: 2px;
 }
 
-/* ---------- Header ---------- */
+/* ---------- Header ---------- */ 
 .site-header {
   padding: var(--gap) 1.5rem;
-  color: #fff;
-  background: linear-gradient(120deg, var(--purple-900), var(--purple-700) 55%, var(--rose-700));
+  color: var(--rose-900);
+  background: linear-gradient(
+    120deg,
+    #fcbcdb,
+    #fd96a5 55%,
+    #f9c6d2
+  );
+  border-bottom: 1px solid rgba(110, 23, 72, 0.08);
 }
-.site-header h1 { margin: 0; font-size: 1.35rem; }
+.site-header h1 { margin: 0; font-size: 1.35rem;  color: rgb(246, 101, 249); }
 
 .steps {
   display: flex;
@@ -708,8 +714,16 @@ a.ccard:focus-visible {
 /* ---------- Landing page ---------- */
 .site-header--bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; }
 .site-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1.1rem; }
-.site-nav a { color: #fff; font-weight: 600; text-decoration: none; }
-.site-nav a:hover { text-decoration: underline; }
+.site-nav a {
+  color: var(--rose-900);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.site-nav a:hover {
+  color: var(--rose-700);
+  text-decoration: underline;
+}
 .site-nav__cta { padding: 0.35rem 1rem; color: var(--purple-900) !important; background: #fff; border-radius: 999px; text-decoration: none !important; }
 
 .hero {
@@ -825,12 +839,19 @@ a.ccard:focus-visible {
 .flow__privacy { margin-top: 1rem; text-align: center; }
 
 .cta {
-  margin: 3rem 0 1rem;
+   margin: 3rem 0 1rem;
   padding: 2.2rem 1.5rem;
   text-align: center;
-  color: #fff;
-  background: linear-gradient(120deg, var(--purple-700), var(--rose-700));
+  color: var(--rose-900);
+  background: linear-gradient(
+    120deg,
+    #F8E4DC,
+    #f0a798 55%,
+    #f6cbdb
+  );
+  border: 1px solid rgba(110, 23, 72, 0.10);
   border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(110, 23, 72, 0.08);
 }
 .cta h2 { margin: 0 0 0.3rem; font-family: var(--serif); font-size: clamp(1.5rem, 4vw, 2rem); }
 .cta p { margin: 0 0 1.2rem; }
