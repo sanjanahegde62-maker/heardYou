@@ -1,37 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"   stop-color="#F45C6E"/>
-      <stop offset="45%"  stop-color="#E8294A"/>
-      <stop offset="100%" stop-color="#9B1B7B"/>
-    </linearGradient>
-    <clipPath id="cr">
-      <rect x="6" y="6" width="52" height="52" rx="14" ry="14"/>
-    </clipPath>
-  </defs>
-  <g clip-path="url(#cr)" fill="url(#hg)">
-    <!-- outer rounded square -->
-    <rect x="6" y="6" width="52" height="52" rx="14" ry="14"/>
-    <!-- knock out inner voids to form H (white) -->
-    <!-- top-center void (between the two strokes at top) -->
-    <rect x="22" y="6" width="14" height="23" fill="white"/>
-    <!-- round the inner arch of top-center void -->
-    <ellipse cx="22" cy="29" rx="7" ry="7" fill="url(#hg)"/>
-    <!-- bottom-center void -->
-    <rect x="28" y="35" width="14" height="23" fill="white"/>
-    <ellipse cx="42" cy="35" rx="7" ry="7" fill="url(#hg)"/>
-    <!-- top-right opening (space inside right bar at top) -->
-    <rect x="34" y="6" width="24" height="18" rx="12" fill="white"/>
-    <!-- bottom-left opening (space inside left bar at bottom) -->
-    <rect x="6" y="38" width="24" height="18" rx="12" fill="white"/>
-    <!-- inner arch voids (the white arches that define the H curves) -->
-    <ellipse cx="26" cy="22" rx="12" ry="12" fill="white"/>
-    <ellipse cx="38" cy="42" rx="12" ry="12" fill="white"/>
-    <!-- re-add left vertical bar -->
-    <rect x="6" y="24" width="16" height="30" fill="url(#hg)"/>
-    <!-- re-add right vertical bar -->
-    <rect x="42" y="6"  width="16" height="30" fill="url(#hg)"/>
-    <!-- re-add crossbar -->
-    <rect x="22" y="27" width="20" height="10" fill="url(#hg)"/>
-  </g>
+  <!-- warm cream rounded-square background -->
+  <rect x="2" y="2" width="60" height="60" rx="14" ry="14" fill="#fdf6ec"/>
+  <!-- subtle burgundy border -->
+  <rect x="2" y="2" width="60" height="60" rx="14" ry="14" fill="none" stroke="#6e1748" stroke-width="2.5"/>
+  <!-- H monogram: two vertical bars + crossbar -->
+  <!-- left vertical bar -->
+  <rect x="13" y="14" width="11" height="36" rx="3" fill="#6e1748"/>
+  <!-- right vertical bar -->
+  <rect x="40" y="14" width="11" height="36" rx="3" fill="#6e1748"/>
+  <!-- crossbar (pink accent) -->
+  <rect x="13" y="28" width="38" height="8" rx="3" fill="#e0568f"/>
 </svg>
