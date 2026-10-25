@@ -1335,31 +1335,6 @@ body.know::before {
     rgba(0,0,0,.18) 75%, rgba(0,0,0,.05) 88%, transparent 100%);
 }
 
-/* ===== ACT page: sunburst background, fades out downward ===== */
-body.act {
-  position: relative;
-  background: #fff6f9;               /* soft pink the photo fades into */
-}
-
-body.act::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 760px;                      /* how far down the sunburst reaches */
-  z-index: -1;                        /* behind all page content */
-  pointer-events: none;
-  background: #f9b8c8 url("../assets/act-bg.jpg") center 50% / cover no-repeat;
-
-  -webkit-mask-image: linear-gradient(to bottom,
-    #000 0%, rgba(0,0,0,.98) 15%, rgba(0,0,0,.9) 30%,
-    rgba(0,0,0,.7) 45%, rgba(0,0,0,.42) 60%,
-    rgba(0,0,0,.18) 75%, rgba(0,0,0,.05) 88%, transparent 100%);
-          mask-image: linear-gradient(to bottom,
-    #000 0%, rgba(0,0,0,.98) 15%, rgba(0,0,0,.9) 30%,
-    rgba(0,0,0,.7) 45%, rgba(0,0,0,.42) 60%,
-    rgba(0,0,0,.18) 75%, rgba(0,0,0,.05) 88%, transparent 100%);
-}
-
 /* ===== Ribbon: crisp outlined style (old bow colour) ===== */
 .ribbon.hero__bow {
   width: 68px;
@@ -1397,4 +1372,25 @@ body.act::before {
     rgba(252, 122, 160, .08) 85%,
     rgba(252, 122, 160, 0)   100%
   );
+}
+
+/* ===== ACT page: sunburst fills the whole screen, no fade, no white edge ===== */
+body.act {
+  background: #f9b8c8;               /* fallback colour, same as the image */
+}
+
+body.act::before {
+  content: "";
+  position: fixed;                    /* always covers the full window */
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: #f9b8c8 url("../assets/act-bg.jpg") center / cover no-repeat;
+  -webkit-mask-image: none;
+          mask-image: none;           /* no fade, so the pink goes right to the bottom */
+}
+
+/* remove the footer's own pink strip so there is no hard line at its bottom */
+body.act .site-footer {
+  background: none;
 }
